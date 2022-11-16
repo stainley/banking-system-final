@@ -30,16 +30,4 @@ public class ReadFile {
         }
     }
 
-    public void writeAccountInformation(String data) throws IOException {
-        BufferedWriter bufferedWriter = null;
-        try  {
-            bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_NAME, true));
-            bufferedWriter.write(data);
-
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
-        } finally {
-            bufferedWriter.close();
-        }
-    }
 }

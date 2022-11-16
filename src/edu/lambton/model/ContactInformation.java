@@ -1,11 +1,12 @@
 package edu.lambton.model;
 
-public class ContactInformation extends PersonalData {
+public class ContactInformation {
     private String phoneNumber;
     private String email;
 
-    public ContactInformation(String name, String address, int birthOfYear) {
-        super(name, address, birthOfYear);
+    public ContactInformation(String phoneNumber, String email) {
+        this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
     public String getPhoneNumber() {
@@ -14,5 +15,13 @@ public class ContactInformation extends PersonalData {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        return "ContactInformation{" +
+                "phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

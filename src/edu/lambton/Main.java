@@ -1,6 +1,7 @@
 package edu.lambton;
 
 import edu.lambton.screen.MainMenu;
+import edu.lambton.services.AccountService;
 
 import java.util.Scanner;
 
@@ -17,6 +18,11 @@ public class Main {
             switch (option) {
                 case 1:
                     System.out.println("Entering");
+                    // Create menu
+                    // Login
+                    AccountService accountService = new AccountService();
+                    //accountService.login();
+                    accountService.register();
                     break;
                 case 2:
                     System.out.println("Exiting....");

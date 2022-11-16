@@ -1,2 +1,5 @@
-package edu.lambton.file;public class WriteFile {
+package edu.lambton.file;
+
+public class WriteFile {
+
 }

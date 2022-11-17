@@ -18,34 +18,34 @@ public class MainMenu {
     }
 // THis is the options menu where user can have multiple options to do the transactions//
 
-    public void Options() {
+    public void optionsMenu() {
         System.out.println("""
                 **********************************************************************************************************  
                 *                                  Options
                 *                               1. My Accounts
                 *                               2. Deposit Money
-                *                               3. WIithdraw Money
+                *                               3. Withdraw Money
                 *                               4. Interac e-transfer
                 *                               5. Bill Payments
                 *                               6. Transfer Funds
                 *                               7. Find Us 
-                *                               8. Go Back
+                *                               8. Logout
                 * ******************************************************************************************************
-                  """);
+                """);
     }
 // The user gets Registered here by filling the form with the options below//
 
     public void Register() {
         System.out.println("""
                 ******************************************************************************************************
-                *                                 1.Name 
-                *                                 2.Card Number
-                *                                 3.Phone
-                *                                 4.E-MAIL
-                *                                 5.Date Of Birth
-                *                                 6.Password
-                *                                 7.Signature
-                *                                 8.Go Back
+                *                                 1. Name
+                *                                 2. Card Number
+                *                                 3. Phone
+                *                                 4. E-MAIL
+                *                                 5. Date Of Birth
+                *                                 6. Password
+                *                                 7. Signature
+                *                                 8. Go Back
                 ******************************************************************************************************                     
                                 
                 """);
@@ -55,9 +55,9 @@ public class MainMenu {
     public void Signin() {
         System.out.println("""
                 ***********************************************************************************************
-                *                           1.Name
-                *                           2.Password
-                *                           3.Go Back 
+                *                           1. Name
+                *                           2. Password
+                *                           3. Go Back
                 ***********************************************************************************************
                                         
                 """);
@@ -68,11 +68,11 @@ public class MainMenu {
     public void Myaccounts() {
         System.out.println("""
                 ******************************************************************************************************
-                *                                       1.Chequing
-                *                                       2.Savings
-                *                                       3.Total CAD
-                *                                       4.Credit
-                *                                       5.Go back
+                *                                       1. Chequing
+                *                                       2. Savings
+                *                                       3. Total CAD
+                *                                       4. Credit
+                *                                       5. Go back
                 ******************************************************************************************************
                                 
                 """);

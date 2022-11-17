@@ -25,7 +25,7 @@ public class MainMenu {
                 *                               1. My Accounts
                 *                               2. Deposit Money
                 *                               3. Withdraw Money
-                *                               4. Interac e-transfer
+                *                               4. Transfer Money
                 *                               5. Bill Payments
                 *                               6. Transfer Funds
                 *                               7. Find Us 

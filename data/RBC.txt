@@ -1,6 +1,0 @@
-stainley,111,Chequing Account,200.0,2022-11-17T07:52:41.144074
-stainley,333,Saving Account,1500.0,2022-11-17T07:53:36.389506
-afreem,555,Saving Account,100.0,2022-11-17T08:03:07.406925
-juan,444,Chequing Account,3000.0,2022-11-17T08:10:50.155732
-juan,555,Saving Account,6000.0,2022-11-17T08:11:05.563004
-juan,677,Saving Account,500.0,2022-11-17T08:11:15.196317

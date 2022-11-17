@@ -54,6 +54,48 @@ public class ReadFile {
         return accounts;
     }
 
+    public User readUserInformation(long accountNumber) throws IOException {
+        BufferedReader bufferedReader = null;
+
+        List<Account> accounts = new ArrayList<>();
+        User localUser = new User();
+        try {
+
+            bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME));
+            while (bufferedReader.ready()) {
+                String accountName = "";
+                String accountInfo = bufferedReader.readLine();
+                String[] columns = accountInfo.split(",");
+                Account account  = new Account();
+                for (int index = 0; index < columns.length; index++) {
+                    if (columns[1].equals(String.valueOf(accountNumber))) {
+                        accountName = columns[0];
+
+                        account.setAccountNumber(Long.parseLong(columns[1]));
+                        if (columns[2].equals("Saving Account")) {
+                            account.setAccountType(AccountType.SAVING_ACCOUNT);
+                        } else {
+                            account.setAccountType(AccountType.CHEQUING_ACCOUNT);
+                        }
+
+                        account.setBalance(Double.parseDouble(columns[3]));
+                        account.setCreationDate(LocalDateTime.parse(columns[4]));
+                    }
+                }
+                if (account.getAccountNumber() != null) {
+                    accounts.add(account);
+                    localUser.setUsername(accountName);
+                    localUser.setAccounts(accounts);
+                }
+            }
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        } finally {
+            bufferedReader.close();
+        }
+        return localUser;
+    }
+
     public User readUserInformation(String accountName) throws IOException {
         BufferedReader bufferedReader = null;
 

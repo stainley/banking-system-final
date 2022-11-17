@@ -54,12 +54,14 @@ public class Main {
                                         System.out.print("Select account: ");
                                         accNo = selectOption.nextLong();
                                         long finalAccNo1 = accNo;
+                                        AccountService finalAccountService = accountService;
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountNumber().equals(finalAccNo1)) {
                                                 globalAccount = account;
+                                                finalAccountService.depositMoney(userFound.getUsername(), account, money);
                                             }
                                         });
-                                        accountService.depositMoney(userFound.getUsername(), money);
+
                                         break;
                                     case 3:
                                         System.out.println("Withdraw Money");
@@ -75,6 +77,17 @@ public class Main {
                                             }
                                         });
                                         accountService.withdrawMoney(userFound.getUsername(), money);
+                                        break;
+                                    case 4:
+                                        while (true)  {
+                                            try {
+                                                System.out.println("Transfer money to another account");
+                                                transferMoneyToAccount(userFound);
+                                                break;
+                                            } catch (AccountNotFoundException anf) {
+                                                System.err.println(anf.getMessage());
+                                            }
+                                        }
                                         break;
                                     case 8:
                                         keep = false;
@@ -99,8 +112,35 @@ public class Main {
             } catch (AccountNotFoundException cnfe) {
                 System.out.println("Please register a new account.");
             }
-
         }
+    }
+
+    /***
+     * Transfer money to account
+     * @param fromUserAccount
+     */
+    private static void transferMoneyToAccount(User fromUserAccount) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("From account number: ");
+        long fromAccountNumber = input.nextLong();
+
+        // Find the account we want to use from one or more accounts
+        fromUserAccount.getAccounts().forEach(account -> {
+            if (account.getAccountNumber().equals(fromAccountNumber)) {
+                globalAccount = account;
+            } else {
+                throw new AccountNotFoundException("Account not found # " + fromAccountNumber);
+            }
+        });
+
+        System.out.print("To account number: ");
+        long toAccountNumber = input.nextLong();
+
+        System.out.print("Money: ");
+        double amount = input.nextDouble();
+
+        AccountService accountService = new AccountService();
+        accountService.transferMoney(globalAccount, fromUserAccount, toAccountNumber, amount);
     }
 
     private static void showMyAccounts(User userAccounts) {
@@ -115,17 +155,17 @@ public class Main {
                 """);
 
         userAccounts.getAccounts().forEach(account -> {
-                accountNumber[0] = String.valueOf(account.getAccountNumber());
-                accountType[0] = account.getAccountType().getString();
-                balance[0] =    String.format("$%,3.2f", account.getBalance());
-            System.out.print("""
-                #       Account Number: %s                                                  
-                #           - Account Type: %s                                              
-                #           - Balance: %s                                                   
-                #---------------------------------------------------------------------------
-                """.formatted(accountNumber[0], accountType[0], balance[0]));
+            accountNumber[0] = String.valueOf(account.getAccountNumber());
+            accountType[0] = account.getAccountType().getString();
+            balance[0] = String.format("$%,3.2f", account.getBalance());
+            System.out.printf("""
+                    #       Account Number: %s                                                  
+                    #           - Account Type: %s                                              
+                    #           - Balance: %s                                                   
+                    #---------------------------------------------------------------------------
+                    """, accountNumber[0], accountType[0], balance[0]);
         });
         System.out.println("#############################################################################");
-
     }
 }
+

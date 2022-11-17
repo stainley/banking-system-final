@@ -3,6 +3,7 @@ package edu.lambton.services;
 import edu.lambton.Main;
 import edu.lambton.exception.AccountNotFoundException;
 import edu.lambton.exception.InvalidOptionException;
+import edu.lambton.exception.NotEnoughBalanceException;
 import edu.lambton.file.ReadFile;
 import edu.lambton.file.WriteFile;
 import edu.lambton.model.Account;
@@ -104,6 +105,27 @@ public class AccountService {
         }
     }
 
+    public User getUserByAccountNumber(long accountNumber) {
+        ReadFile readFile = new ReadFile();
+
+        if (readFile.validateIfFileExists(DBFile.DB_FILE_NAME)) {
+            try {
+                User accountsInfFile = readFile.readUserInformation(accountNumber);
+
+                if (accountsInfFile.getAccounts() == null) {
+                    throw new AccountNotFoundException("Account doesn't exit");
+                } else {
+                    return accountsInfFile;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            System.out.println("File doesn't exist. Go back to login menu");
+            throw new AccountNotFoundException("Account not found");
+        }
+    }
+
     public User login(String accountName) {
         ReadFile readFile = new ReadFile();
         if (readFile.validateIfFileExists(DBFile.DB_FILE_NAME)) {
@@ -125,13 +147,15 @@ public class AccountService {
         }
     }
 
-    public void depositMoney(String accoutName, double money) {
-        double newBalance = Main.globalAccount.getBalance() + money;
-        Main.globalAccount.setBalance(newBalance);
+    public void depositMoney(String accountName, Account account, double money) {
+        //public void depositMoney(String accountName, double money) {
+        double newBalance = account.getBalance() + money;
+        account.setBalance(newBalance);
+
         System.out.println("Money " + money + " deposited in you account. New balance is: $" + newBalance);
 
         WriteFile writeFile = new WriteFile();
-        writeFile.updateBalanceInFile(accoutName, Main.globalAccount);
+        writeFile.updateBalanceInFile(accountName, account);
     }
 
     public void withdrawMoney(String accountName, double money) {
@@ -145,6 +169,27 @@ public class AccountService {
             WriteFile writeFile = new WriteFile();
             writeFile.updateBalanceInFile(accountName, Main.globalAccount);
         }
+    }
 
+    public void transferMoney(Account globalAccount, User fromUserAccount, long toAccountNumber, double amount) {
+        if (globalAccount.getBalance() < amount) {
+            throw new NotEnoughBalanceException("Don't enough balance. You balance is: " + globalAccount.getBalance());
+        }
+
+        // First we need to withdraw money, and then send to another account
+        withdrawMoney(fromUserAccount.getUsername(), amount);
+
+        // Search user account to be sent money
+
+        // Then deposit money in the other account
+        User toUser = getUserByAccountNumber(toAccountNumber);
+        String toUserName = toUser.getUsername();
+
+        toUser.getAccounts().forEach(account -> {
+            if (account.getAccountNumber() == toAccountNumber) {
+                depositMoney(toUserName, account, amount);
+                System.out.println("Money has been transferred successfully.");
+            }
+        });
     }
 }

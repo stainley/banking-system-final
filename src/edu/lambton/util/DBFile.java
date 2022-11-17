@@ -1,6 +1,9 @@
 package edu.lambton.util;
 
 public class DBFile {
+    private static final String DIRECTORY = "data/";
+    public static final String DB_FILE_NAME = DIRECTORY + "RBC.txt";
 
-    public static final String DB_FILE_NAME = "data/RBC.txt";
+    private DBFile() {
+    }
 }

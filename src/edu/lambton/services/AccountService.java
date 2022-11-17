@@ -39,8 +39,7 @@ public class AccountService {
     private Account createAccount() {
         Scanner input = new Scanner(System.in);
 
-        System.out.print("Account number: ");
-        long accoundNum = input.nextLong();
+
         System.out.println("""
                 ----------------------------------------------
                             Account Type
@@ -51,10 +50,14 @@ public class AccountService {
                 """);
         System.out.print("Choose type account: ");
         int typeAccountSelected = input.nextInt();
+
+        System.out.print("Account number: ");
+        long accountNumber = input.nextLong();
+
         System.out.print("Choose balance: ");
         double initialBalance = input.nextDouble();
 
-        return new Account(accoundNum, typeAccount(typeAccountSelected), initialBalance);
+        return new Account(accountNumber, typeAccount(typeAccountSelected), initialBalance);
     }
 
     private AccountType typeAccount(int accountNumber) {

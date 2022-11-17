@@ -13,9 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         boolean keepRunning = true;
-        AccountService accountService = null;
+        AccountService accountService;
         MainMenu mainMenu = new MainMenu();
-        long accNo = 0L;
+        long accNo;
         while (keepRunning) {
             mainMenu.createMainScreen();
 
@@ -24,11 +24,12 @@ public class Main {
                 System.out.print("Select an option: ");
                 int option = selectOption.nextInt();
                 switch (option) {
-                    case 1:
+                    case 1 -> {
                         accountService = new AccountService();
+                        // TODO: Validate if account exists in another user before create a new account number.
                         accountService.registerAccount();
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         accountService = new AccountService();
                         System.out.print("Enter username: ");
                         try {
@@ -87,30 +88,44 @@ public class Main {
                         } catch (AccountNotFoundException acn) {
                             System.err.println("Account doesn't exists, please select another account");
                         }
-
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         System.out.println("Exiting....");
                         keepRunning = false;
                         System.exit(9);
-                        break;
-                    default:
-                        System.out.println("Invalid option");
+                    }
+                    default -> System.out.println("Invalid option");
                 }
             } catch (AccountNotFoundException cnfe) {
-                System.out.println("Register accound");
+                System.out.println("Please register a new account.");
             }
 
         }
     }
 
-
     private static void showMyAccounts(User userAccounts) {
-        System.out.println("Show account information");
-        System.out.println("-----------------------------------------------------------------------------");
+        final String[] accountNumber = new String[1];
+        final String[] accountType = new String[1];
+        final String[] balance = new String[1];
+
+        System.out.print("""
+                #############################################################################
+                #                            ACCOUNT INFORMATION
+                #############################################################################
+                """);
+
         userAccounts.getAccounts().forEach(account -> {
-            System.out.println("\tAccount Number: " + account.getAccountNumber() + " - Balance: " + account.getBalance());
+                accountNumber[0] = String.valueOf(account.getAccountNumber());
+                accountType[0] = account.getAccountType().getString();
+                balance[0] =    String.format("$%,3.2f", account.getBalance());
+            System.out.print("""
+                #       Account Number: %s                                                  
+                #           - Account Type: %s                                              
+                #           - Balance: %s                                                   
+                #---------------------------------------------------------------------------
+                """.formatted(accountNumber[0], accountType[0], balance[0]));
         });
-        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("#############################################################################");
+
     }
 }

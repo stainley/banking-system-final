@@ -7,7 +7,6 @@ public class Account {
     private Long accountNumber;
     private AccountType accountType;
     private double balance;
-
     private LocalDateTime creationDate;
 
     public Account() {

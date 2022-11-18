@@ -11,5 +11,5 @@ public enum AccountType {
         return this.typeString;
     }
 
-    private String typeString;
+    private final String typeString;
 }

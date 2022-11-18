@@ -94,4 +94,22 @@ public class WriteFile {
             throw new RuntimeException(e);
         }
     }
+
+    public void updatePersonalData(String username, PersonalData personalData) {
+        try {
+            List<String> fileContent = new ArrayList<>(Files.readAllLines(Path.of(DBFile.DB_PERSONAL_INFORMATION), StandardCharsets.UTF_8));
+            for (int counter = 0; counter < fileContent.size(); counter++) {
+
+                String[] order = fileContent.get(counter).split(",");
+                if (order[0].equals(username)) {
+                    fileContent.set(counter, username + "," + personalData.toString());
+                    break;
+                }
+            }
+
+            Files.write(Path.of(DBFile.DB_FILE_NAME), fileContent, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

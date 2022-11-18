@@ -34,7 +34,6 @@ public class AccountService {
             }
         }
 
-
         System.out.print("Password: ");
         String password = input.next().trim();
 
@@ -107,7 +106,6 @@ public class AccountService {
                 System.out.println("Please choose another account number.");
             }
         }
-
 
         System.out.print("Choose balance: ");
         double initialBalance = input.nextDouble();
@@ -299,5 +297,14 @@ public class AccountService {
             throw new AccountNotFoundException("Cannot find detail");
         }
         return personalData;
+    }
+
+    public void updatePersonaData(String username, PersonalData personalData) {
+        WriteFile writeFile = new WriteFile();
+        try {
+            writeFile.writeAccountInformation(username, personalData);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

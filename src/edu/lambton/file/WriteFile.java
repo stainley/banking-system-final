@@ -17,12 +17,12 @@ import java.util.List;
 public class WriteFile {
 
 
-    public void writeAccountInformation(PersonalData data) throws IOException {
+    public void writeAccountInformation(String username, PersonalData data) throws IOException {
         BufferedWriter bufferedWriter = null;
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_NAME, true));
-            bufferedWriter.write(data.toString());
-
+            bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_PERSONAL_INFORMATION, true));
+            bufferedWriter.write(username + "," + data.toString() + "\n");
+            bufferedWriter.flush();
         } catch (IOException ioe) {
             System.err.println(ioe.getMessage());
         } finally {
@@ -58,6 +58,22 @@ public class WriteFile {
         } finally {
             bufferedWriter.close();
         }
+    }
+
+    public boolean writePasswordFile(String passwordInfo) throws IOException {
+        BufferedWriter passBufferedWriter = null;
+        try {
+            passBufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_CREDENTIAL, true));
+
+            passBufferedWriter.write(passwordInfo + "\n");
+            passBufferedWriter.flush();
+            return true;
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        } finally {
+            passBufferedWriter.close();
+        }
+        return false;
     }
 
     public void updateBalanceInFile(String owner, Account account) {

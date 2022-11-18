@@ -32,10 +32,6 @@ public class PersonalData extends ContactInformation {
 
     @Override
     public String toString() {
-        return "PersonalData{" +
-                "name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", birthOfYear=" + birthOfYear +
-                '}';
+        return name + "," + address + "," + birthOfYear + "," + getPhoneNumber() + "," + getEmail();
     }
 }

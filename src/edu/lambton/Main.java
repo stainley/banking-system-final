@@ -1,15 +1,19 @@
 package edu.lambton;
 
 import edu.lambton.exception.AccountNotFoundException;
+import edu.lambton.exception.InvalidCredentialException;
 import edu.lambton.model.Account;
+import edu.lambton.model.PersonalData;
 import edu.lambton.model.User;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     public static Account globalAccount;
+    static final String[] validNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     public static void main(String[] args) {
         boolean keepRunning = true;
@@ -22,29 +26,44 @@ public class Main {
             try {
                 Scanner selectOption = new Scanner(System.in);
                 System.out.print("Select an option: ");
-                int option = selectOption.nextInt();
+
+                int option = 0;
+                String stringNumber = selectOption.next();
+                for (String number : validNumbers) {
+                    if (Objects.equals(number, stringNumber)) {
+                        option = Integer.parseInt(stringNumber);
+                    }
+                }
                 switch (option) {
                     case 1 -> {
                         accountService = new AccountService();
-                        // TODO: Validate if account exists in another user before create a new account number.
                         accountService.registerAccount();
                     }
                     case 2 -> {
                         accountService = new AccountService();
                         System.out.print("Enter username: ");
+                        String userName = selectOption.next().trim();
+
+                        System.out.print("Enter password: ");
+                        String password = selectOption.next().trim();
+
                         try {
                             boolean keep = true;
-                            User userFound = accountService.login(selectOption.next().trim());
+                            User userFound = accountService.login(userName, password);
 
                             while (keep) {
 
-                                mainMenu.optionsMenu();
+                                mainMenu.optionsMenu(userName);
                                 System.out.print("Please select an option: ");
                                 int accOptions = selectOption.nextInt();
                                 double money;
                                 switch (accOptions) {
                                     case 1:
-                                        showMyAccounts(userFound);
+                                        while (true) {
+                                            if (!mainMenu.showMyAccounts(userFound)) {
+                                                break;
+                                            }
+                                        }
                                         break;
                                     case 2:
                                         System.out.println("Deposit Money");
@@ -64,22 +83,23 @@ public class Main {
 
                                         break;
                                     case 3:
-                                        System.out.println("Withdraw Money");
                                         // Invoke deposit money
+                                        System.out.println("Withdraw Money");
                                         System.out.print("Please type amount: $");
                                         money = selectOption.nextDouble();
                                         System.out.print("Select account: ");
                                         accNo = selectOption.nextLong();
                                         long finalAccNo = accNo;
+                                        AccountService finalAccountService1 = accountService;
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountNumber().equals(finalAccNo)) {
-                                                globalAccount = account;
+                                                finalAccountService1.withdrawMoney(userFound.getUsername(), account, money);
                                             }
                                         });
-                                        accountService.withdrawMoney(userFound.getUsername(), money);
+
                                         break;
                                     case 4:
-                                        while (true)  {
+                                        while (true) {
                                             try {
                                                 System.out.println("Transfer money to another account");
                                                 transferMoneyToAccount(userFound);
@@ -89,7 +109,28 @@ public class Main {
                                             }
                                         }
                                         break;
-                                    case 8:
+                                    case 5:
+                                        try {
+                                            System.out.println("Pay the bill");
+                                            transferMoneyToAccount(userFound);
+                                            break;
+                                        } catch (AccountNotFoundException anf) {
+                                            System.err.println(anf.getMessage());
+                                        }
+                                        break;
+                                    case 6:
+                                        while (true) {
+                                            System.out.println("Client Information");
+                                            PersonalData personalData = new AccountService().getPersonalData(userFound.getUsername());
+                                            mainMenu.personalInformationMenu(personalData);
+                                            System.out.print("Please select option to go back: ");
+                                            Scanner input = new Scanner(System.in);
+                                            if (input.nextInt() == 6) {
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    case 7:
                                         keep = false;
                                         break;
                                     default:
@@ -97,9 +138,12 @@ public class Main {
                                 }
                             }
 
-
                         } catch (AccountNotFoundException acn) {
                             System.err.println("Account doesn't exists, please select another account");
+                        } catch (InvalidCredentialException ice) {
+                            System.err.printf("""
+                                                          Error Message: %s
+                                    """, ice.getMessage());
                         }
                     }
                     case 3 -> {
@@ -117,7 +161,7 @@ public class Main {
 
     /***
      * Transfer money to account
-     * @param fromUserAccount
+     * @param fromUserAccount User account
      */
     private static void transferMoneyToAccount(User fromUserAccount) {
         Scanner input = new Scanner(System.in);
@@ -127,45 +171,20 @@ public class Main {
         // Find the account we want to use from one or more accounts
         fromUserAccount.getAccounts().forEach(account -> {
             if (account.getAccountNumber().equals(fromAccountNumber)) {
-                globalAccount = account;
-            } else {
-                throw new AccountNotFoundException("Account not found # " + fromAccountNumber);
+
+                System.out.print("To account number: ");
+                long toAccountNumber = input.nextLong();
+
+                System.out.print("Money: ");
+                double amount = input.nextDouble();
+
+                AccountService accountService = new AccountService();
+                accountService.transferMoney(account, fromUserAccount, toAccountNumber, amount);
+
             }
         });
-
-        System.out.print("To account number: ");
-        long toAccountNumber = input.nextLong();
-
-        System.out.print("Money: ");
-        double amount = input.nextDouble();
-
-        AccountService accountService = new AccountService();
-        accountService.transferMoney(globalAccount, fromUserAccount, toAccountNumber, amount);
     }
 
-    private static void showMyAccounts(User userAccounts) {
-        final String[] accountNumber = new String[1];
-        final String[] accountType = new String[1];
-        final String[] balance = new String[1];
 
-        System.out.print("""
-                #############################################################################
-                #                            ACCOUNT INFORMATION
-                #############################################################################
-                """);
-
-        userAccounts.getAccounts().forEach(account -> {
-            accountNumber[0] = String.valueOf(account.getAccountNumber());
-            accountType[0] = account.getAccountType().getString();
-            balance[0] = String.format("$%,3.2f", account.getBalance());
-            System.out.printf("""
-                    #       Account Number: %s                                                  
-                    #           - Account Type: %s                                              
-                    #           - Balance: %s                                                   
-                    #---------------------------------------------------------------------------
-                    """, accountNumber[0], accountType[0], balance[0]);
-        });
-        System.out.println("#############################################################################");
-    }
 }
 

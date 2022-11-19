@@ -1,7 +1,7 @@
 package edu.lambton.screen;
 
 import edu.lambton.model.PersonalData;
-import edu.lambton.model.User;
+import edu.lambton.model.Client;
 
 import java.util.Scanner;
 
@@ -41,7 +41,7 @@ public class MainMenu {
     }
 
 
-     public boolean showMyAccounts(User userAccounts) {
+     public boolean showMyAccounts(Client userAccounts) {
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];

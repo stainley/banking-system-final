@@ -2,9 +2,10 @@ package edu.lambton;
 
 import edu.lambton.exception.AccountNotFoundException;
 import edu.lambton.exception.InvalidCredentialException;
+import edu.lambton.exception.NotEnoughBalanceException;
 import edu.lambton.model.Account;
 import edu.lambton.model.PersonalData;
-import edu.lambton.model.User;
+import edu.lambton.model.Client;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
 
@@ -49,7 +50,7 @@ public class Main {
 
                         try {
                             boolean keep = true;
-                            User userFound = accountService.login(userName, password);
+                            Client userFound = accountService.login(userName, password);
 
                             while (keep) {
 
@@ -59,6 +60,7 @@ public class Main {
                                 double money;
                                 switch (accOptions) {
                                     case 1:
+
                                         while (true) {
                                             if (!mainMenu.showMyAccounts(userFound)) {
                                                 break;
@@ -74,29 +76,38 @@ public class Main {
                                         accNo = selectOption.nextLong();
                                         long finalAccNo1 = accNo;
                                         AccountService finalAccountService = accountService;
+                                        double finalMoney1 = money;
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountNumber().equals(finalAccNo1)) {
                                                 globalAccount = account;
-                                                finalAccountService.depositMoney(userFound.getUsername(), account, money);
+                                                finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
                                             }
                                         });
 
                                         break;
                                     case 3:
-                                        // Invoke deposit money
-                                        System.out.println("Withdraw Money");
-                                        System.out.print("Please type amount: $");
-                                        money = selectOption.nextDouble();
-                                        System.out.print("Select account: ");
-                                        accNo = selectOption.nextLong();
-                                        long finalAccNo = accNo;
-                                        AccountService finalAccountService1 = accountService;
-                                        userFound.getAccounts().forEach(account -> {
-                                            if (account.getAccountNumber().equals(finalAccNo)) {
-                                                finalAccountService1.withdrawMoney(userFound.getUsername(), account, money);
-                                            }
-                                        });
+                                        while(true) {
+                                            try {
 
+                                                System.out.println("Withdraw Money");
+                                                System.out.print("Please type amount: $");
+                                                money = selectOption.nextDouble();
+                                                System.out.print("Select account: ");
+                                                accNo = selectOption.nextLong();
+                                                long finalAccNo = accNo;
+                                                AccountService finalAccountService1 = accountService;
+                                                double finalMoney = money;
+                                                userFound.getAccounts().forEach(account -> {
+                                                    if (account.getAccountNumber().equals(finalAccNo)) {
+                                                        finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
+
+                                                    }
+                                                });
+                                                break;
+                                            }catch (NotEnoughBalanceException ioe) {
+                                                System.out.println(ioe.getMessage());
+                                            }
+                                        }
                                         break;
                                     case 4:
                                         while (true) {
@@ -163,7 +174,7 @@ public class Main {
      * Transfer money to account
      * @param fromUserAccount User account
      */
-    private static void transferMoneyToAccount(User fromUserAccount) {
+    private static void transferMoneyToAccount(Client fromUserAccount) {
         Scanner input = new Scanner(System.in);
         System.out.print("From account number: ");
         long fromAccountNumber = input.nextLong();
@@ -180,7 +191,6 @@ public class Main {
 
                 AccountService accountService = new AccountService();
                 accountService.transferMoney(account, fromUserAccount, toAccountNumber, amount);
-
             }
         });
     }

@@ -1,12 +1,24 @@
 package edu.lambton.services;
 
 import edu.lambton.exception.*;
-import edu.lambton.file.ReadFile;
-import edu.lambton.file.WriteFile;
+import edu.lambton.file.reader.account.ReadAccountInformation;
+import edu.lambton.file.reader.account.ReadAccountInformationImpl;
+import edu.lambton.file.reader.account.ReadClientInformation;
+import edu.lambton.file.reader.account.ReadClientInformationImpl;
+import edu.lambton.file.reader.client.ReadClientDetail;
+import edu.lambton.file.reader.client.ReadClientDetailImpl;
+import edu.lambton.file.reader.credential.CredentialReadFile;
+import edu.lambton.file.reader.credential.CredentialReadFileImpl;
+import edu.lambton.file.writer.account.WriteAccountInformation;
+import edu.lambton.file.writer.account.WriteAccountInformationImpl;
+import edu.lambton.file.writer.client.WriteClientDetail;
+import edu.lambton.file.writer.client.WriteClientDetailImpl;
+import edu.lambton.file.writer.credential.WriteCredentialFile;
+import edu.lambton.file.writer.credential.WriteCredentialFileImpl;
 import edu.lambton.model.Account;
 import edu.lambton.model.AccountType;
+import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
-import edu.lambton.model.User;
 import edu.lambton.util.DBFile;
 
 import java.io.IOException;
@@ -14,7 +26,7 @@ import java.util.*;
 
 public class AccountService {
 
-    private User createUser() {
+    private Client createUser() {
         List<Account> accounts = new ArrayList<>();
 
         Scanner input = new Scanner(System.in);
@@ -44,37 +56,36 @@ public class AccountService {
             register(username);
 
             // how many account you want to add
-            System.out.print("How many account would you like to add? ");
+            System.out.print("How many account would you like to add? [MAXIMUM 2]");
             int numAccounts = input.nextInt();
 
             for (int i = 0; i < numAccounts; i++) {
                 accounts.add(createAccount());
             }
-            return new User(username, accounts);
+            return new Client(username, accounts);
         }
         return null;
     }
 
     private boolean createPassword(String username, String password) {
-        WriteFile writeFile = new WriteFile();
+        WriteCredentialFile writeCredentialFile = new WriteCredentialFileImpl();
         StringBuilder sb = new StringBuilder();
         String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
 
         sb.append(username).append(",").append(encodedPassword);
 
         try {
-            return writeFile.writePasswordFile(sb.toString());
+            return writeCredentialFile.writePasswordFile(sb.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private boolean validatePassword(String username, String password) {
-        ReadFile readPasswordFile = new ReadFile();
-        String passwordFromFile = readPasswordFile.readPasswordInformation(username);
+        CredentialReadFile credentialReadFile = new CredentialReadFileImpl();
+        String passwordFromFile = credentialReadFile.readPasswordInformation(username);
 
         byte[] decodedPassword = Base64.getDecoder().decode(passwordFromFile);
-
         return password.equals(new String(decodedPassword));
     }
 
@@ -114,8 +125,8 @@ public class AccountService {
     }
 
     private boolean usernameIsAvailable(String username) {
-        ReadFile readFile = new ReadFile();
-        for (String usernameFound : readFile.getAllUsernameInformation()) {
+        ReadClientInformation readFileUserInformation = new ReadClientInformationImpl();
+        for (String usernameFound : readFileUserInformation.getAllUsernameInformation()) {
             if (Objects.equals(usernameFound, username)) {
                 return false;
             }
@@ -124,8 +135,8 @@ public class AccountService {
     }
 
     private boolean accountNumberIsAvailable(long accountNumber) {
-        ReadFile readFile = new ReadFile();
-        for (long accNumberFound : readFile.getAllAccountInformation()) {
+        ReadAccountInformation readAccountInformation = new ReadAccountInformationImpl();
+        for (long accNumberFound : readAccountInformation.getAllAccountInformation()) {
             if (accNumberFound == accountNumber) {
                 return false;
             }
@@ -160,66 +171,53 @@ public class AccountService {
     }
 
     public void registerAccount() {
-        WriteFile writeFile = new WriteFile();
-
-        try {
-            writeFile.writeAccountInformation(createUser());
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        WriteClientDetail writeClientDetail = new WriteClientDetailImpl();
+        writeClientDetail.writeClientDetail(createUser());
     }
 
     public void register(String username) {
-        WriteFile writeFile = new WriteFile();
+        WriteClientDetail writeClientDetail = new WriteClientDetailImpl();
 
         try {
-            writeFile.writeAccountInformation(username, registerInfoPersonaData());
+            writeClientDetail.writeClientDetail(username, registerInfoPersonaData());
             System.out.println("User registered successfully.\n\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public User getUserByAccountNumber(long accountNumber) {
-        ReadFile readFile = new ReadFile();
+    public Client getUserByAccountNumber(long accountNumber) {
+        ReadClientInformation readUserInformation = new ReadClientInformationImpl();
 
-        if (readFile.validateIfFileExists(DBFile.DB_FILE_NAME)) {
-            try {
-                User accountsInfFile = readFile.readUserInformation(accountNumber);
+        if (readUserInformation.validateIfFileExists(DBFile.DB_FILE_NAME)) {
 
-                if (accountsInfFile.getAccounts() == null) {
-                    throw new AccountNotFoundException("Account doesn't exit");
-                } else {
-                    return accountsInfFile;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            Client accountsInfFile = readUserInformation.readClientInformation(accountNumber);
+
+            if (accountsInfFile.getAccounts() == null) {
+                throw new AccountNotFoundException("Account doesn't exit");
+            } else {
+                return accountsInfFile;
             }
+
         } else {
             System.out.println("File doesn't exist. Go back to login menu");
             throw new AccountNotFoundException("Account not found");
         }
     }
 
-    public User login(String accountName, String password) {
-        ReadFile readFile = new ReadFile();
+    public Client login(String accountName, String password) {
+        ReadClientInformation readClientInformation = new ReadClientInformationImpl();
 
         if (validatePassword(accountName, password)) {
-            if (readFile.validateIfFileExists(DBFile.DB_FILE_NAME)) {
-                try {
-                    User accountstInFile = readFile.readUserInformation(accountName);
+            if (readClientInformation.validateIfFileExists(DBFile.DB_FILE_NAME)) {
+                Client accountsInFile = readClientInformation.readClientInformation(accountName);
 
-                    if (accountstInFile.getAccounts() == null) {
-                        throw new AccountNotFoundException("Account doesn't exit");
-                    } else {
-                        return accountstInFile;
-                    }
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if (accountsInFile.getAccounts() == null) {
+                    throw new AccountNotFoundException("Account doesn't exit");
+                } else {
+                    return accountsInFile;
                 }
             } else {
-                System.out.println("File doesn't exist. Go back to login menu");
                 throw new AccountNotFoundException("Account not found");
             }
         } else {
@@ -238,8 +236,8 @@ public class AccountService {
         double newBalance = account.getBalance() + money;
         account.setBalance(newBalance);
 
-        WriteFile writeFile = new WriteFile();
-        writeFile.updateBalanceInFile(accountName, account);
+        WriteAccountInformation writeAccountInformation = new WriteAccountInformationImpl();
+        writeAccountInformation.writeAccountBalance(accountName, account);
         System.out.println("Money " + money + " deposited in you account. New balance is: $" + newBalance);
     }
 
@@ -257,8 +255,8 @@ public class AccountService {
             double newBalance = balance - money;
             account.setBalance(newBalance);
 
-            WriteFile writeFile = new WriteFile();
-            writeFile.updateBalanceInFile(accountName, account);
+            WriteAccountInformation writeAccountInformation = new WriteAccountInformationImpl();
+            writeAccountInformation.writeAccountBalance(accountName, account);
         }
     }
 
@@ -269,7 +267,7 @@ public class AccountService {
      * @param toAccountNumber To which account number money will be sent
      * @param amount  Money to be deposited
      */
-    public void transferMoney(Account fromAccount, User fromUserAccount, long toAccountNumber, double amount) {
+    public void transferMoney(Account fromAccount, Client fromUserAccount, long toAccountNumber, double amount) {
         if (fromAccount.getBalance() < amount) {
             throw new NotEnoughBalanceException("Don't enough balance. You balance is: " + fromAccount.getBalance());
         }
@@ -278,7 +276,7 @@ public class AccountService {
         withdrawMoney(fromUserAccount.getUsername(), fromAccount, amount);
 
         // Search user account to be sent money
-        User toUser = getUserByAccountNumber(toAccountNumber);
+        Client toUser = getUserByAccountNumber(toAccountNumber);
         String toUserName = toUser.getUsername();
 
         // Then deposit money in the other account
@@ -291,8 +289,8 @@ public class AccountService {
     }
 
     public PersonalData getPersonalData(String username) {
-        ReadFile readFile = new ReadFile();
-        PersonalData personalData = readFile.getClientInformationByUsername(username);
+        ReadClientDetail clientDetailReadFile = new ReadClientDetailImpl();
+        PersonalData personalData = clientDetailReadFile.getClientInformationByUsername(username);
         if (personalData == null) {
             throw new AccountNotFoundException("Cannot find detail");
         }
@@ -300,9 +298,9 @@ public class AccountService {
     }
 
     public void updatePersonaData(String username, PersonalData personalData) {
-        WriteFile writeFile = new WriteFile();
+        WriteClientDetail writeClientDetail = new WriteClientDetailImpl();
         try {
-            writeFile.writeAccountInformation(username, personalData);
+            writeClientDetail.writeClientDetail(username, personalData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

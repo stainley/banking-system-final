@@ -13,11 +13,10 @@ public class ReadAccountInformationImpl extends ValidateFile implements ReadAcco
 
     @Override
     public List<Long> getAllAccountInformation() {
-        BufferedReader br = null;
+
         List<Long> accountsNumber = new ArrayList<>();
         if (validateIfFileExists(DBFile.DB_FILE_NAME)) {
-            try {
-                br = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME));
+            try (BufferedReader br = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
 
                 while (br.ready()) {
                     String line = br.readLine();
@@ -25,10 +24,9 @@ public class ReadAccountInformationImpl extends ValidateFile implements ReadAcco
                     long accountNumber = Long.parseLong(columns[1]);
                     accountsNumber.add(accountNumber);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } finally {
                 this.closeFile(br);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
         }
         return accountsNumber;
@@ -39,7 +37,7 @@ public class ReadAccountInformationImpl extends ValidateFile implements ReadAcco
         try {
             file.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
     }
 }

@@ -9,40 +9,35 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static java.lang.System.*;
+import static java.lang.System.err;
 
 public class WriteClientDetailImpl implements WriteClientDetail {
 
     @Override
     public void writeClientDetail(String username, PersonalData data) {
-        BufferedWriter bufferedWriter = null;
-        try {
-            bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_PERSONAL_INFORMATION, true));
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_PERSONAL_INFORMATION, true))) {
             bufferedWriter.write(username + "," + data.toString() + "\n");
             bufferedWriter.flush();
+
+            this.closeFile(bufferedWriter);
         } catch (IOException ioe) {
             err.println(ioe.getMessage());
-        } finally {
-            assert bufferedWriter != null;
-            this.closeFile(bufferedWriter);
         }
     }
 
     @Override
     public void writeClientDetail(Client userAccount) {
-        BufferedWriter bufferedWriter = null;
-        try {
-            bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_NAME, true));
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_NAME, true))) {
 
             for (Account account : userAccount.getAccounts()) {
                 bufferedWriter.write(userAccount.getUsername() + "," + account.getAccountInformation() + "\n");
             }
             bufferedWriter.flush();
-
+            this.closeFile(bufferedWriter);
         } catch (IOException ioe) {
             System.err.println(ioe.getMessage());
-        } finally {
-            this.closeFile(bufferedWriter);
         }
     }
 
@@ -51,7 +46,7 @@ public class WriteClientDetailImpl implements WriteClientDetail {
         try {
             file.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            err.println(e.getMessage());
         }
     }
 }

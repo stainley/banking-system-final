@@ -6,22 +6,19 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class WriteCredentialFileImpl implements WriteCredentialFile{
+public class WriteCredentialFileImpl implements WriteCredentialFile {
 
     @Override
-    public boolean writePasswordFile(String passwordInfo) throws IOException {
-        BufferedWriter passBufferedWriter = null;
-        try {
-            passBufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_CREDENTIAL, true));
+    public boolean writePasswordFile(String passwordInfo) {
+
+        try (BufferedWriter passBufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_CREDENTIAL, true))) {
 
             passBufferedWriter.write(passwordInfo + "\n");
             passBufferedWriter.flush();
+            closeFile(passBufferedWriter);
             return true;
         } catch (IOException ioe) {
             System.err.println(ioe.getMessage());
-        } finally {
-            assert passBufferedWriter != null;
-            closeFile(passBufferedWriter);
         }
         return false;
     }

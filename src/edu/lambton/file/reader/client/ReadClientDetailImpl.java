@@ -11,9 +11,8 @@ public class ReadClientDetailImpl implements ReadClientDetail {
 
     @Override
     public PersonalData getClientInformationByUsername(String username) {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(DBFile.DB_PERSONAL_INFORMATION));
+
+        try (BufferedReader br = new BufferedReader(new FileReader(DBFile.DB_PERSONAL_INFORMATION))) {
             while (br.ready()) {
                 String row = br.readLine();
                 String[] column = row.split(",");
@@ -21,10 +20,9 @@ public class ReadClientDetailImpl implements ReadClientDetail {
                     return new PersonalData(column[1], Integer.parseInt(column[3]), column[2], column[5], column[4]);
                 }
             }
+            this.closeFile(br);
         } catch (IOException ioe) {
             System.out.println(ioe.getMessage());
-        } finally {
-            this.closeFile(br);
         }
         return null;
     }
@@ -34,7 +32,7 @@ public class ReadClientDetailImpl implements ReadClientDetail {
         try {
             file.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
     }
 }

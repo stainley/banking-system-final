@@ -11,11 +11,11 @@ public class CredentialReadFileImpl extends ValidateFile implements CredentialRe
 
     @Override
     public String readPasswordInformation(String username) {
-        BufferedReader passBufferedReader = null;
+
 
         if (validateIfFileExists(DBFile.DB_FILE_NAME)) {
-            try {
-                passBufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_CREDENTIAL));
+            try (BufferedReader passBufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_CREDENTIAL))) {
+
                 while (passBufferedReader.ready()) {
                     String credentialData = passBufferedReader.readLine();
                     String[] credentialColumn = credentialData.split(",");
@@ -23,11 +23,9 @@ public class CredentialReadFileImpl extends ValidateFile implements CredentialRe
                         return credentialColumn[1];
                     }
                 }
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } finally {
                 this.closeFile(passBufferedReader);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
         }
         return "";

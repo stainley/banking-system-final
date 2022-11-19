@@ -19,13 +19,11 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
 
     @Override
     public Client readClientInformation(long accountNumber) {
-        BufferedReader bufferedReader = null;
 
         List<Account> accounts = new ArrayList<>();
         Client localUser = new Client();
-        try {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
 
-            bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME));
             while (bufferedReader.ready()) {
                 String accountName = "";
                 String accountInfo = bufferedReader.readLine();
@@ -34,16 +32,7 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
                 for (int index = 0; index < columns.length; index++) {
                     if (columns[1].equals(String.valueOf(accountNumber))) {
                         accountName = columns[0];
-
-                        account.setAccountNumber(Long.parseLong(columns[1]));
-                        if (columns[2].equals("Saving Account")) {
-                            account.setAccountType(AccountType.SAVING_ACCOUNT);
-                        } else {
-                            account.setAccountType(AccountType.CHEQUING_ACCOUNT);
-                        }
-
-                        account.setBalance(Double.parseDouble(columns[3]));
-                        account.setCreationDate(LocalDateTime.parse(columns[4]));
+                        setAccountNumber(columns, account);
                     }
                 }
                 if (account.getAccountNumber() != null) {
@@ -52,32 +41,40 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
                     localUser.setAccounts(accounts);
                 }
             }
+            closeFile(bufferedReader);
         } catch (IOException ioe) {
             System.out.println(ioe.getMessage());
-        } finally {
-            closeFile(bufferedReader);
         }
         return localUser;
     }
 
+    private void setAccountNumber(String[] columns, Account account) {
+        account.setAccountNumber(Long.parseLong(columns[1]));
+        if (columns[2].equals("Saving Account")) {
+            account.setAccountType(AccountType.SAVING_ACCOUNT);
+        } else {
+            account.setAccountType(AccountType.CHEQUING_ACCOUNT);
+        }
+
+        account.setBalance(Double.parseDouble(columns[3]));
+        account.setCreationDate(LocalDateTime.parse(columns[4]));
+    }
+
     @Override
     public Set<String> getAllUsernameInformation() {
-        BufferedReader br = null;
+
         Set<String> usernames = new HashSet<>();
 
         if (validateIfFileExists(DBFile.DB_FILE_NAME)) {
-            try {
-                br = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME));
+            try (BufferedReader br = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
                 while (br.ready()) {
                     String row = br.readLine();
                     String[] columns = row.split(",");
                     usernames.add(columns[0]);
                 }
+                closeFile(br);
             } catch (IOException ioe) {
                 System.err.println(ioe.getMessage());
-            } finally {
-                assert br != null;
-                closeFile(br);
             }
         }
         return usernames;
@@ -85,13 +82,12 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
 
     @Override
     public Client readClientInformation(String accountName) {
-        BufferedReader bufferedReader = null;
+
 
         List<Account> accounts = new ArrayList<>();
         Client localUser = new Client();
-        try {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
 
-            bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME));
             while (bufferedReader.ready()) {
                 String accountInfo = bufferedReader.readLine();
                 String[] columns = accountInfo.split(",");
@@ -99,15 +95,7 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
                 for (int index = 0; index < columns.length; index++) {
                     if (columns[0].equals(accountName)) {
                         account = new Account();
-                        account.setAccountNumber(Long.parseLong(columns[1]));
-                        if (columns[2].equals("Saving Account")) {
-                            account.setAccountType(AccountType.SAVING_ACCOUNT);
-                        } else {
-                            account.setAccountType(AccountType.CHEQUING_ACCOUNT);
-                        }
-
-                        account.setBalance(Double.parseDouble(columns[3]));
-                        account.setCreationDate(LocalDateTime.parse(columns[4]));
+                        setAccountNumber(columns, account);
                     }
                 }
                 if (account != null) {
@@ -116,10 +104,9 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
                     localUser.setAccounts(accounts);
                 }
             }
+            this.closeFile(bufferedReader);
         } catch (IOException ioe) {
             System.err.println(ioe.getMessage());
-        } finally {
-            this.closeFile(bufferedReader);
         }
         return localUser;
     }
@@ -129,7 +116,7 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
         try {
             file.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
     }
 }

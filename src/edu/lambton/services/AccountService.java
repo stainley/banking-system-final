@@ -1,5 +1,6 @@
 package edu.lambton.services;
 
+import edu.lambton.exception.BankException;
 import edu.lambton.exception.types.*;
 import edu.lambton.file.reader.account.ReadAccountInformation;
 import edu.lambton.file.reader.account.ReadAccountInformationImpl;
@@ -15,7 +16,10 @@ import edu.lambton.file.writer.client.WriteClientDetail;
 import edu.lambton.file.writer.client.WriteClientDetailImpl;
 import edu.lambton.file.writer.credential.WriteCredentialFile;
 import edu.lambton.file.writer.credential.WriteCredentialFileImpl;
-import edu.lambton.model.*;
+import edu.lambton.model.AccountAbstract;
+import edu.lambton.model.AccountType;
+import edu.lambton.model.Client;
+import edu.lambton.model.PersonalData;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.AccountNumberGenerator;
@@ -256,6 +260,11 @@ public class AccountService {
      */
     public void withdrawMoney(String accountName, AccountAbstract account, double money) {
         double balance = account.getBalance();
+
+        if (money <= 0) {
+            throw new BankException("Please deposit a positive number greater than 1.");
+        }
+
         if (balance < money) {
             throw new NotEnoughBalanceException("Transaction could not be  processed. Not enough balance");
         } else {

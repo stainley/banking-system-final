@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class Main {
     public static AccountAbstract globalAccount;
-    static final String[] validNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    static final String[] validOptionNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     public static void main(String[] args) {
         boolean keepRunning = true;
@@ -31,7 +31,7 @@ public class Main {
 
                 int option = 0;
                 String stringNumber = selectOption.next();
-                for (String number : validNumbers) {
+                for (String number : validOptionNumbers) {
                     if (Objects.equals(number, stringNumber)) {
                         option = Integer.parseInt(stringNumber);
                     }
@@ -59,6 +59,7 @@ public class Main {
                                 System.out.print("Please select an option: ");
                                 int accOptions = selectOption.nextInt();
                                 double money;
+                                String[] accountsNumber = new String[2];
                                 switch (accOptions) {
                                     case 1:
 
@@ -69,11 +70,12 @@ public class Main {
                                         }
                                         break;
                                     case 2:
+                                        // DEPOSIT MONEY
                                         System.out.println("Deposit Money");
                                         // Invoke deposit money
                                         System.out.print("Please type amount: $");
                                         money = selectOption.nextDouble();
-                                        String[] accountsNumber = new String[2];
+                                        //String[] accountsNumber = new String[2];
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
                                                 accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
@@ -108,23 +110,46 @@ public class Main {
                                         }
                                         break;
                                     case 3:
+                                        // WITHDRAW OPERATION
                                         while (true) {
                                             try {
 
                                                 System.out.println("Withdraw Money");
                                                 System.out.print("Please type amount: $");
                                                 money = selectOption.nextDouble();
-                                                System.out.print("Select account: ");
-                                                accNo = selectOption.nextLong();
-                                                long finalAccNo = accNo;
-                                                AccountService finalAccountService1 = accountService;
-                                                double finalMoney = money;
-                                                userFound.getAccounts().forEach(account -> {
-                                                    if (account.getAccountNumber().equals(finalAccNo)) {
-                                                        finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
 
+                                                System.out.print("Select account: ");
+
+                                                userFound.getAccounts().forEach(account -> {
+                                                    if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
+                                                        accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
+                                                    } else {
+                                                        accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
                                                     }
                                                 });
+
+                                                if(accountsNumber[0] == null) {
+                                                    accountsNumber[0] = "0";
+                                                } else if (accountsNumber[1] == null) {
+                                                    accountsNumber[1] = "0";
+                                                }
+                                                new MainMenu().chooseAccountMenu(accountsNumber);
+                                                System.out.print("Select account: [1][2]: ");
+
+                                                int withdrawAccNumSelected = selectOption.nextInt();
+                                                if (withdrawAccNumSelected == 1 || withdrawAccNumSelected == 2) {
+                                                    long finalAccNo1 = Long.parseLong(accountsNumber[withdrawAccNumSelected - 1]);
+                                                    if (finalAccNo1 > 0) {
+                                                        AccountService finalAccountService1 = accountService;
+                                                        double finalMoney = money;
+                                                        userFound.getAccounts().forEach(account -> {
+                                                            if (account.getAccountNumber().equals(finalAccNo1)) {
+                                                                finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
+                                                            }
+                                                        });
+                                                        //TODO: Show menu with report actual balance.
+                                                    }
+                                                }
                                                 break;
                                             } catch (NotEnoughBalanceException ioe) {
                                                 System.out.println(ioe.getMessage());
@@ -132,6 +157,7 @@ public class Main {
                                         }
                                         break;
                                     case 4:
+                                        // TRANSFER MONEY IN THE SAME ACCOUNT OR DIFFERENT ACCOUNT
                                         while (true) {
                                             try {
                                                 System.out.println("Transfer money to another account");

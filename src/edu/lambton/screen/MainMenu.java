@@ -3,10 +3,12 @@ package edu.lambton.screen;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
+import edu.lambton.model.transaction.Transaction;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.MenuUtil;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class MainMenu {
@@ -93,18 +95,7 @@ public class MainMenu {
     }
 
     // here by using this option the user can send the money or can request the money //
-    public void Interacetransfer() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                         1.Send Money
-                *                                         2.Request Money
-                *                                         3.Stop Transaction
-                *                                         4.Review History
-                *                                         5.Manage Transaction
-                *                                         6.Go Back
-                ********************************************************************************************************
-                """);
-    }
+
 
     public void payBillMenu() {
         System.out.println("""
@@ -191,5 +182,25 @@ public class MainMenu {
         Scanner pressEnter = new Scanner(System.in);
         String keyPressed = pressEnter.next();
         return !keyPressed.equalsIgnoreCase("Y");
+    }
+
+    public void reportAllTransactionMenuByUsername(List<Transaction> transactions) {
+        System.out.print("""
+                ********************************************************************************************************
+                *                                      REPORT TRANSACTIONS
+                ********************************************************************************************************
+                """);
+
+        transactions.forEach(transaction -> {
+            System.out.println(transaction.getTransactionId() + " | " +
+                    transaction.getTransactionType() + " | " +
+                    transaction.getTransactionTime() + " | " +
+                    transaction.getAccount().getAccountNumber() + " | " +
+                    transaction.getAccount().getAccountInformation() + " | " +
+                    transaction.getTransactionType());
+            System.out.println("-----------------------------------------------------------------------------------------");
+        });
+
+
     }
 }

@@ -7,11 +7,15 @@ import edu.lambton.exception.types.NotEnoughBalanceException;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
+import edu.lambton.model.transaction.Transaction;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
+import edu.lambton.services.transaction.TransactionService;
+import edu.lambton.services.transaction.TransactionServiceImpl;
 import edu.lambton.util.MenuUtil;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -200,11 +204,18 @@ public class Main {
                                         }
                                         break;
                                     case 7:
+                                        MenuUtil.clearScreen();
                                         System.out.println("Transaction Report");
                                         while (true) {
+                                            TransactionService<Transaction> transactionService = new TransactionServiceImpl();
+                                            List<Transaction> transactions = transactionService.getAllTransactionByUsername(userFound.getUsername());
+                                            new MainMenu().reportAllTransactionMenuByUsername(transactions);
 
-
-                                            break;
+                                            System.out.print("Press Y to go back: ");
+                                            Scanner inputGoBack = new Scanner(System.in);
+                                            if (inputGoBack.next().equalsIgnoreCase("Y")) {
+                                                break;
+                                            }
                                         }
                                         break;
                                     case 8:

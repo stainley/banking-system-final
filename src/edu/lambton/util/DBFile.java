@@ -8,7 +8,6 @@ public class DBFile {
 
     public static final String DB_TRANSACTION_REPORT = DIRECTORY + "transaction.csv";
 
-
     private DBFile() {
     }
 }

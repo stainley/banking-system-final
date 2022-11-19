@@ -1,6 +1,6 @@
 package edu.lambton.services;
 
-import edu.lambton.exception.*;
+import edu.lambton.exception.types.*;
 import edu.lambton.file.reader.account.ReadAccountInformation;
 import edu.lambton.file.reader.account.ReadAccountInformationImpl;
 import edu.lambton.file.reader.account.ReadClientInformation;

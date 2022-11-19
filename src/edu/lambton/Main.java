@@ -1,8 +1,8 @@
 package edu.lambton;
 
-import edu.lambton.exception.AccountNotFoundException;
-import edu.lambton.exception.InvalidCredentialException;
-import edu.lambton.exception.NotEnoughBalanceException;
+import edu.lambton.exception.types.AccountNotFoundException;
+import edu.lambton.exception.types.InvalidCredentialException;
+import edu.lambton.exception.types.NotEnoughBalanceException;
 import edu.lambton.model.Account;
 import edu.lambton.model.PersonalData;
 import edu.lambton.model.Client;

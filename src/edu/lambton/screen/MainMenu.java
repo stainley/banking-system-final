@@ -5,6 +5,7 @@ import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
+import edu.lambton.util.MenuUtil;
 
 import java.util.Scanner;
 
@@ -12,7 +13,7 @@ public class MainMenu {
 // This is the main menu where the user can get registered and  if is already registered then can sign in or can exit//
 
     public void createMainScreen() {
-
+        MenuUtil.clearScreen();
         System.out.println("""
                 ********************************************************************************************************
                 *                                                                                                      *
@@ -27,6 +28,7 @@ public class MainMenu {
 // THis is the options menu where user can have multiple options to do the transactions//
 
     public void optionsMenu(String message) {
+        MenuUtil.clearScreen();
         System.out.printf("""
                 *********************************************************************************************************
                                                 Welcome %s
@@ -37,14 +39,16 @@ public class MainMenu {
                 *                               3. Withdraw Money                                                       *
                 *                               4. Transfer Money                                                       *
                 *                               5. Bill Payments                                                        *
-                *                               6. Client Information                                                   *        
-                *                               7. Logout                                                               *
+                *                               6. Client Information                                                   *
+                *                               7. Transactions                                                         *
+                *                               8. Logout                                                               *
                 ********************************************************************************************************
                 """, message);
     }
 
 
     public boolean showMyAccounts(Client userAccounts) {
+        MenuUtil.clearScreen();
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -82,7 +86,7 @@ public class MainMenu {
                 *                                 2. Address:       %s
                 *                                 3. Phone:         %s
                 *                                 4. Email:         %s
-                *                                 5. Date Of Birth: %s
+                *                                 5. Age:           %s
                 *                                 6. Go Back
                 ****************************************************************************************************************
                 """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
@@ -128,6 +132,7 @@ public class MainMenu {
     }
 
     public boolean reportSuccessTransaction(AccountAbstract account, long transactionId) {
+        MenuUtil.clearScreen();
         StringBuilder typeAccount = new StringBuilder();
         if (account instanceof SavingAccount) {
             typeAccount.append(account.getAccountType().getString());
@@ -154,6 +159,7 @@ public class MainMenu {
     }
 
     public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, long transactionId) {
+        MenuUtil.clearScreen();
         StringBuilder typeAccount = new StringBuilder();
         if (fromAccount instanceof SavingAccount) {
             typeAccount.append(fromAccount.getAccountType().getString());
@@ -180,7 +186,7 @@ public class MainMenu {
                 typeAccount, String.format("$%,3.2f", fromAccount.getBalance()),
                 toAccount.getAccountNumber(),
                 String.format("$%,3.2f", toAccount.getBalance()));
-        
+
         System.out.print("Press Y to return. ");
         Scanner pressEnter = new Scanner(System.in);
         String keyPressed = pressEnter.next();

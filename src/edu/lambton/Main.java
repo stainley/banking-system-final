@@ -10,6 +10,7 @@ import edu.lambton.model.PersonalData;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
+import edu.lambton.util.MenuUtil;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -73,6 +74,7 @@ public class Main {
                                         break;
                                     case 2:
                                         // DEPOSIT MONEY
+                                        MenuUtil.clearScreen();
                                         System.out.println("Deposit Money");
                                         // Invoke deposit money
                                         System.out.print("Please type amount: $");
@@ -186,20 +188,18 @@ public class Main {
                                         break;
                                     case 6:
                                         while (true) {
+                                            MenuUtil.clearScreen();
                                             System.out.println("Client Information");
                                             PersonalData personalData = new AccountService().getPersonalData(userFound.getUsername());
                                             mainMenu.personalInformationMenu(personalData);
-                                            System.out.print("Please select option to go back: ");
+                                            System.out.print("Please press Y to go main menu: ");
                                             Scanner input = new Scanner(System.in);
-                                            if (input.nextInt() == 6) {
+                                            if (input.next().equalsIgnoreCase("Y")) {
                                                 break;
                                             }
                                         }
                                         break;
                                     case 7:
-                                        keep = false;
-                                        break;
-                                    case 8:
                                         System.out.println("Transaction Report");
                                         while (true) {
 
@@ -207,6 +207,10 @@ public class Main {
                                             break;
                                         }
                                         break;
+                                    case 8:
+                                        keep = false;
+                                        break;
+
                                     default:
                                         System.out.println("Invalid option.  Choose an option");
                                 }

@@ -6,7 +6,6 @@ import edu.lambton.model.PersonalData;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
 
-
 import java.util.Scanner;
 
 public class MainMenu {
@@ -29,7 +28,6 @@ public class MainMenu {
 
     public void optionsMenu(String message) {
         System.out.printf("""
-
                 *********************************************************************************************************
                                                 Welcome %s
                 ---------------------------------------------------------------------------------------------------------
@@ -47,7 +45,6 @@ public class MainMenu {
 
 
     public boolean showMyAccounts(Client userAccounts) {
-
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -92,7 +89,6 @@ public class MainMenu {
     }
 
     // here by using this option the user can send the money or can request the money //
-
     public void Interacetransfer() {
         System.out.println("""
                 ********************************************************************************************************
@@ -131,7 +127,7 @@ public class MainMenu {
                 %n""", accountNumber[0], accountNumber[1]);
     }
 
-    public boolean reportSuccessTransaction(AccountAbstract account, int trasactionId) {
+    public boolean reportSuccessTransaction(AccountAbstract account, long transactionId) {
         StringBuilder typeAccount = new StringBuilder();
         if (account instanceof SavingAccount) {
             typeAccount.append(account.getAccountType().getString());
@@ -150,11 +146,44 @@ public class MainMenu {
                 #           - Account Type: %s
                 #           - Balance: %s
                 #############################################################################
-                %n""", trasactionId, account.getAccountNumber(), typeAccount, account.getBalance());
+                %n""", transactionId, account.getAccountNumber(), typeAccount, String.format("$%,3.2f", account.getBalance()));
         System.out.print("Press Y to return. ");
         Scanner pressEnter = new Scanner(System.in);
         String keyPressed = pressEnter.next();
         return !keyPressed.equalsIgnoreCase("Y");
+    }
 
+    public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, long transactionId) {
+        StringBuilder typeAccount = new StringBuilder();
+        if (fromAccount instanceof SavingAccount) {
+            typeAccount.append(fromAccount.getAccountType().getString());
+        } else if (fromAccount instanceof ChequingAccount) {
+            typeAccount.append(fromAccount.getAccountType().getString());
+        } else {
+            System.err.println("Invalid type account");
+        }
+
+        System.out.printf("""
+                        #############################################################################
+                        #                            ACCOUNT INFORMATION
+                        #############################################################################
+                        #       Transaction ID: %s
+                        #       From: Account Number: %s
+                        #           - Account Type: %s
+                        #           - Balance: %s
+                        #       To: Account Number: %s
+                        #           - Amount: %s
+                        #############################################################################
+                        %n""",
+                transactionId,
+                fromAccount.getAccountNumber(),
+                typeAccount, String.format("$%,3.2f", fromAccount.getBalance()),
+                toAccount.getAccountNumber(),
+                String.format("$%,3.2f", toAccount.getBalance()));
+        
+        System.out.print("Press Y to return. ");
+        Scanner pressEnter = new Scanner(System.in);
+        String keyPressed = pressEnter.next();
+        return !keyPressed.equalsIgnoreCase("Y");
     }
 }

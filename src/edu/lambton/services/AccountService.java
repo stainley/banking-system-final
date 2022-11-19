@@ -29,6 +29,7 @@ import edu.lambton.model.transaction.TransactionType;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
+import edu.lambton.screen.MainMenu;
 import edu.lambton.util.AccountNumberGenerator;
 import edu.lambton.util.DBFile;
 
@@ -285,7 +286,7 @@ public class AccountService {
         WriteTransaction<Transaction> writeTransaction = new WriteTransactionImpl();
         writeTransaction.writeTransactionReport(transaction, money, Main.transactionId);
 
-        System.out.println("Money " + money + " deposited in you account. New balance is: $" + newBalance);
+        System.out.println("Money " + money + " deposited in you account.");
     }
 
     /**
@@ -337,6 +338,20 @@ public class AccountService {
             WriteAccountInformation writeAccountInformation = new WriteAccountInformationImpl();
             writeAccountInformation.writeAccountBalance(accountName, account);
 
+            // Log the transaction into a file
+            Transaction transaction = new Transaction();
+            Main.transactionId = this.createTransactionSequence();
+            transaction.setTransactionId(Main.transactionId);
+            transaction.setUsername(accountName);
+            transaction.setAccount(account);
+            transaction.setTransactionTime(LocalDateTime.now());
+            transaction.setTransactionType(TransactionType.WITHDRAW);
+
+            WriteTransaction<Transaction> writeTransaction = new WriteTransactionImpl();
+            writeTransaction.writeTransactionReport(transaction, money, Main.transactionId);
+
+            System.out.println("Withdraw has been completed. " + String.format("$%,3.2f", money));
+
         }
     }
 
@@ -366,8 +381,11 @@ public class AccountService {
             if (account.getAccountNumber() == toAccountNumber) {
                 depositMoney(toUserName, account, amount);
                 System.out.println("Money has been transferred successfully.");
+                account.setBalance(amount);
+                new MainMenu().reportSuccessTransferTransaction(fromAccount, account, Main.transactionId);
             }
         });
+
     }
 
     public PersonalData getPersonalData(String username) {
@@ -380,13 +398,6 @@ public class AccountService {
         return personalData;
     }
 
-    public void updatePersonaData(String username, PersonalData personalData) {
-        WriteClientDetail writeClientDetail = new WriteClientDetailImpl();
-        try {
-            writeClientDetail.writeClientDetail(username, personalData);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
+

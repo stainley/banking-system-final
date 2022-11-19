@@ -15,10 +15,10 @@ import edu.lambton.file.writer.client.WriteClientDetail;
 import edu.lambton.file.writer.client.WriteClientDetailImpl;
 import edu.lambton.file.writer.credential.WriteCredentialFile;
 import edu.lambton.file.writer.credential.WriteCredentialFileImpl;
-import edu.lambton.model.Account;
-import edu.lambton.model.AccountType;
-import edu.lambton.model.Client;
-import edu.lambton.model.PersonalData;
+import edu.lambton.model.*;
+import edu.lambton.model.type.ChequingAccount;
+import edu.lambton.model.type.SavingAccount;
+import edu.lambton.util.AccountNumberGenerator;
 import edu.lambton.util.DBFile;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.util.*;
 public class AccountService {
 
     private Client createUser() {
-        List<Account> accounts = new ArrayList<>();
+        List<AccountAbstract> accounts = new ArrayList<>();
 
         Scanner input = new Scanner(System.in);
         String username = "";
@@ -89,7 +89,7 @@ public class AccountService {
         return password.equals(new String(decodedPassword));
     }
 
-    private Account createAccount() {
+    private AccountAbstract createAccount() {
         Scanner input = new Scanner(System.in);
 
 
@@ -103,11 +103,13 @@ public class AccountService {
                 """);
         System.out.print("Choose type account: ");
         int typeAccountSelected = input.nextInt();
+        //long accountNumber = 0;
         long accountNumber = 0;
         while (true) {
             try {
-                System.out.print("Account number: ");
-                accountNumber = input.nextLong();
+                accountNumber = new AccountNumberGenerator().generatorAccountNumber();
+                System.out.println("Account number: " + accountNumber);
+                //accountNumber = input.nextLong();
 
                 if (!accountNumberIsAvailable(accountNumber)) {
                     throw new AccountNotAvailableException("Account is not available: " + accountNumber);
@@ -120,8 +122,13 @@ public class AccountService {
 
         System.out.print("Choose balance: ");
         double initialBalance = input.nextDouble();
+        AccountType typeAccount = typeAccount(typeAccountSelected);
 
-        return new Account(accountNumber, typeAccount(typeAccountSelected), initialBalance);
+        if (typeAccount == AccountType.SAVING_ACCOUNT) {
+            return new SavingAccount(accountNumber, initialBalance);
+        } else {
+            return new ChequingAccount(accountNumber, initialBalance);
+        }
     }
 
     private boolean usernameIsAvailable(String username) {
@@ -232,7 +239,7 @@ public class AccountService {
      * @param account     Receive money
      * @param money       amount to be deposited
      */
-    public void depositMoney(String accountName, Account account, double money) {
+    public void depositMoney(String accountName, AccountAbstract account, double money) {
         double newBalance = account.getBalance() + money;
         account.setBalance(newBalance);
 
@@ -247,7 +254,7 @@ public class AccountService {
      * @param account That store the account data
      * @param money Amount to be deducted from account
      */
-    public void withdrawMoney(String accountName, Account account, double money) {
+    public void withdrawMoney(String accountName, AccountAbstract account, double money) {
         double balance = account.getBalance();
         if (balance < money) {
             throw new NotEnoughBalanceException("Transaction could not be  processed. Not enough balance");
@@ -267,7 +274,7 @@ public class AccountService {
      * @param toAccountNumber To which account number money will be sent
      * @param amount  Money to be deposited
      */
-    public void transferMoney(Account fromAccount, Client fromUserAccount, long toAccountNumber, double amount) {
+    public void transferMoney(AccountAbstract fromAccount, Client fromUserAccount, long toAccountNumber, double amount) {
         if (fromAccount.getBalance() < amount) {
             throw new NotEnoughBalanceException("Don't enough balance. You balance is: " + fromAccount.getBalance());
         }

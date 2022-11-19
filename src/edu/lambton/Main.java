@@ -3,9 +3,10 @@ package edu.lambton;
 import edu.lambton.exception.types.AccountNotFoundException;
 import edu.lambton.exception.types.InvalidCredentialException;
 import edu.lambton.exception.types.NotEnoughBalanceException;
-import edu.lambton.model.Account;
-import edu.lambton.model.PersonalData;
+import edu.lambton.model.AccountAbstract;
+import edu.lambton.model.AccountType;
 import edu.lambton.model.Client;
+import edu.lambton.model.PersonalData;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-    public static Account globalAccount;
+    public static AccountAbstract globalAccount;
     static final String[] validNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
     public static void main(String[] args) {
@@ -72,21 +73,31 @@ public class Main {
                                         // Invoke deposit money
                                         System.out.print("Please type amount: $");
                                         money = selectOption.nextDouble();
-                                        System.out.print("Select account: ");
-                                        accNo = selectOption.nextLong();
-                                        long finalAccNo1 = accNo;
-                                        AccountService finalAccountService = accountService;
-                                        double finalMoney1 = money;
+                                        String[] accountsNumber = new String[2];
                                         userFound.getAccounts().forEach(account -> {
-                                            if (account.getAccountNumber().equals(finalAccNo1)) {
-                                                globalAccount = account;
-                                                finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
+                                            if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
+                                                accountsNumber[0] = String.valueOf(account.getAccountNumber());
+                                            } else {
+                                                accountsNumber[1] = String.valueOf(account.getAccountNumber());
                                             }
                                         });
-
+                                        new MainMenu().chooseAccountMenu(accountsNumber);
+                                        System.out.print("Select account: [1][2]: ");
+                                        int accNumSelected = selectOption.nextInt();
+                                        if (accNumSelected == 1 || accNumSelected == 2) {
+                                            long finalAccNo1 = Long.parseLong(accountsNumber[accNumSelected - 1]);
+                                            AccountService finalAccountService = accountService;
+                                            double finalMoney1 = money;
+                                            userFound.getAccounts().forEach(account -> {
+                                                if (account.getAccountNumber().equals(finalAccNo1)) {
+                                                    globalAccount = account;
+                                                    finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
+                                                }
+                                            });
+                                        }
                                         break;
                                     case 3:
-                                        while(true) {
+                                        while (true) {
                                             try {
 
                                                 System.out.println("Withdraw Money");
@@ -104,7 +115,7 @@ public class Main {
                                                     }
                                                 });
                                                 break;
-                                            }catch (NotEnoughBalanceException ioe) {
+                                            } catch (NotEnoughBalanceException ioe) {
                                                 System.out.println(ioe.getMessage());
                                             }
                                         }

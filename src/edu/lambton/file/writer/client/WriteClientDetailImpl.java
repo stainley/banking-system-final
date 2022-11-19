@@ -1,6 +1,6 @@
 package edu.lambton.file.writer.client;
 
-import edu.lambton.model.Account;
+import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
 import edu.lambton.util.DBFile;
@@ -31,7 +31,7 @@ public class WriteClientDetailImpl implements WriteClientDetail {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_FILE_NAME, true))) {
 
-            for (Account account : userAccount.getAccounts()) {
+            for (AccountAbstract account : userAccount.getAccounts()) {
                 bufferedWriter.write(userAccount.getUsername() + "," + account.getAccountInformation() + "\n");
             }
             bufferedWriter.flush();

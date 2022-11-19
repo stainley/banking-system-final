@@ -6,17 +6,17 @@ public class Client {
     private String username;
     private String password;
 
-    private List<Account> accounts;
+    private List<AccountAbstract> accounts;
 
     public Client() {
     }
 
-    public Client(String username, List<Account> accounts) {
+    public Client(String username, List<AccountAbstract> accounts) {
         this.username = username;
         this.accounts = accounts;
     }
 
-    public Client(String username, String password, List<Account> accounts) {
+    public Client(String username, String password, List<AccountAbstract> accounts) {
         this.username = username;
         this.password = password;
         this.accounts = accounts;
@@ -30,11 +30,11 @@ public class Client {
         this.username = username;
     }
 
-    public List<Account> getAccounts() {
+    public List<AccountAbstract> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(List<Account> accounts) {
+    public void setAccounts(List<AccountAbstract> accounts) {
         this.accounts = accounts;
     }
 

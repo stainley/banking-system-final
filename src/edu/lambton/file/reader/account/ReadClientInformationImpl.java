@@ -1,9 +1,11 @@
 package edu.lambton.file.reader.account;
 
 import edu.lambton.file.ValidateFile;
-import edu.lambton.model.Account;
+import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.AccountType;
 import edu.lambton.model.Client;
+import edu.lambton.model.type.ChequingAccount;
+import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.DBFile;
 
 import java.io.BufferedReader;
@@ -20,7 +22,7 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
     @Override
     public Client readClientInformation(long accountNumber) {
 
-        List<Account> accounts = new ArrayList<>();
+        List<AccountAbstract> accounts = new ArrayList<>();
         Client localUser = new Client();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
 
@@ -28,7 +30,16 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
                 String accountName = "";
                 String accountInfo = bufferedReader.readLine();
                 String[] columns = accountInfo.split(",");
-                Account account = new Account();
+
+
+                AccountAbstract account = null;
+                String typeOfAccount = columns[4];
+                if (typeOfAccount.equals(AccountType.SAVING_ACCOUNT.getString())) {
+                    account = new SavingAccount();
+                } else {
+                    account = new ChequingAccount();
+                }
+
                 for (int index = 0; index < columns.length; index++) {
                     if (columns[1].equals(String.valueOf(accountNumber))) {
                         accountName = columns[0];
@@ -48,16 +59,16 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
         return localUser;
     }
 
-    private void setAccountNumber(String[] columns, Account account) {
+    private void setAccountNumber(String[] columns, AccountAbstract account) {
         account.setAccountNumber(Long.parseLong(columns[1]));
-        if (columns[2].equals("Saving Account")) {
+        if (columns[2].equals(AccountType.SAVING_ACCOUNT.getString())) {
             account.setAccountType(AccountType.SAVING_ACCOUNT);
         } else {
             account.setAccountType(AccountType.CHEQUING_ACCOUNT);
         }
 
-        account.setBalance(Double.parseDouble(columns[3]));
-        account.setCreationDate(LocalDateTime.parse(columns[4]));
+        account.setBalance(Double.parseDouble(columns[2]));
+        account.setCreationDate(LocalDateTime.parse(columns[3]));
     }
 
     @Override
@@ -84,17 +95,25 @@ public class ReadClientInformationImpl extends ValidateFile implements ReadClien
     public Client readClientInformation(String accountName) {
 
 
-        List<Account> accounts = new ArrayList<>();
+        List<AccountAbstract> accounts = new ArrayList<>();
         Client localUser = new Client();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(DBFile.DB_FILE_NAME))) {
 
             while (bufferedReader.ready()) {
                 String accountInfo = bufferedReader.readLine();
                 String[] columns = accountInfo.split(",");
-                Account account = null;
+                AccountAbstract account = null;
+
+
                 for (int index = 0; index < columns.length; index++) {
                     if (columns[0].equals(accountName)) {
-                        account = new Account();
+                        String typeAccount = columns[4];
+
+                        if (typeAccount.equals(AccountType.SAVING_ACCOUNT.name())) {
+                            account = new SavingAccount();
+                        } else {
+                            account = new ChequingAccount();
+                        }
                         setAccountNumber(columns, account);
                     }
                 }

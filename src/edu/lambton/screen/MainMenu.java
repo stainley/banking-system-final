@@ -6,7 +6,6 @@ import edu.lambton.model.PersonalData;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
 
-
 import java.util.Scanner;
 
 public class MainMenu {
@@ -29,7 +28,6 @@ public class MainMenu {
 
     public void optionsMenu(String message) {
         System.out.printf("""
-
                 *********************************************************************************************************
                                                 Welcome %s
                 ---------------------------------------------------------------------------------------------------------
@@ -47,7 +45,6 @@ public class MainMenu {
 
 
     public boolean showMyAccounts(Client userAccounts) {
-
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -92,7 +89,6 @@ public class MainMenu {
     }
 
     // here by using this option the user can send the money or can request the money //
-
     public void Interacetransfer() {
         System.out.println("""
                 ********************************************************************************************************
@@ -189,6 +185,5 @@ public class MainMenu {
         Scanner pressEnter = new Scanner(System.in);
         String keyPressed = pressEnter.next();
         return !keyPressed.equalsIgnoreCase("Y");
-
     }
 }

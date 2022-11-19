@@ -1,5 +1,7 @@
 package edu.lambton.model;
 
+import edu.lambton.model.type.AccountType;
+
 import java.time.LocalDateTime;
 
 

@@ -2,7 +2,7 @@ package edu.lambton.file.reader.account;
 
 import edu.lambton.file.ValidateFile;
 import edu.lambton.model.AccountAbstract;
-import edu.lambton.model.AccountType;
+import edu.lambton.model.type.AccountType;
 import edu.lambton.model.Client;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;

@@ -2,11 +2,12 @@ package edu.lambton;
 
 import edu.lambton.exception.types.AccountNotFoundException;
 import edu.lambton.exception.types.InvalidCredentialException;
+import edu.lambton.exception.types.NegativeBalanceException;
 import edu.lambton.exception.types.NotEnoughBalanceException;
 import edu.lambton.model.AccountAbstract;
-import edu.lambton.model.AccountType;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
+import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountService;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
+    public static long transactionId = 1;
     public static AccountAbstract globalAccount;
     static final String[] validOptionNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
@@ -62,7 +64,7 @@ public class Main {
                                 String[] accountsNumber = new String[2];
                                 switch (accOptions) {
                                     case 1:
-
+                                        // SHOW MY ACCOUNT INFO
                                         while (true) {
                                             if (!mainMenu.showMyAccounts(userFound)) {
                                                 break;
@@ -75,7 +77,6 @@ public class Main {
                                         // Invoke deposit money
                                         System.out.print("Please type amount: $");
                                         money = selectOption.nextDouble();
-                                        //String[] accountsNumber = new String[2];
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
                                                 accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
@@ -84,7 +85,7 @@ public class Main {
                                             }
                                         });
 
-                                        if(accountsNumber[0] == null) {
+                                        if (accountsNumber[0] == null) {
                                             accountsNumber[0] = "0";
                                         } else if (accountsNumber[1] == null) {
                                             accountsNumber[1] = "0";
@@ -128,7 +129,7 @@ public class Main {
                                                     }
                                                 });
 
-                                                if(accountsNumber[0] == null) {
+                                                if (accountsNumber[0] == null) {
                                                     accountsNumber[0] = "0";
                                                 } else if (accountsNumber[1] == null) {
                                                     accountsNumber[1] = "0";
@@ -145,14 +146,19 @@ public class Main {
                                                         userFound.getAccounts().forEach(account -> {
                                                             if (account.getAccountNumber().equals(finalAccNo1)) {
                                                                 finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
+                                                                //TODO: Show menu with report actual balance.
+                                                                // Show report with the success transaction
+                                                                new MainMenu().reportSuccessTransaction(account, 0);
                                                             }
                                                         });
-                                                        //TODO: Show menu with report actual balance.
+
                                                     }
                                                 }
                                                 break;
                                             } catch (NotEnoughBalanceException ioe) {
                                                 System.out.println(ioe.getMessage());
+                                            } catch (NegativeBalanceException nbe) {
+                                                System.out.printf(nbe.getMessage());
                                             }
                                         }
                                         break;
@@ -191,6 +197,14 @@ public class Main {
                                         break;
                                     case 7:
                                         keep = false;
+                                        break;
+                                    case 8:
+                                        System.out.println("Transaction Report");
+                                        while (true) {
+
+
+                                            break;
+                                        }
                                         break;
                                     default:
                                         System.out.println("Invalid option.  Choose an option");

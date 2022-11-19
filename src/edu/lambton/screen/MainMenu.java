@@ -1,7 +1,10 @@
 package edu.lambton.screen;
 
+import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
+import edu.lambton.model.type.ChequingAccount;
+import edu.lambton.model.type.SavingAccount;
 
 import java.util.Scanner;
 
@@ -122,5 +125,31 @@ public class MainMenu {
                 *                                   2. Saving Account: %s
                 ********************************************************************************************************
                 %n""", accountNumber[0], accountNumber[1]);
+    }
+
+    public boolean reportSuccessTransaction(AccountAbstract account, int trasactionId) {
+        StringBuilder typeAccount = new StringBuilder();
+        if (account instanceof SavingAccount) {
+            typeAccount.append(account.getAccountType().getString());
+        } else if (account instanceof ChequingAccount) {
+            typeAccount.append(account.getAccountType().getString());
+        } else {
+            System.err.println("Invalid type account");
+        }
+
+        System.out.printf("""
+                #############################################################################
+                #                            ACCOUNT INFORMATION
+                #############################################################################
+                #       Transaction ID: %s
+                #       Account Number: %s
+                #           - Account Type: %s
+                #           - Balance: %s
+                #############################################################################
+                %n""", trasactionId, account.getAccountNumber(), typeAccount, account.getBalance());
+        System.out.print("Press Y to return. ");
+        Scanner pressEnter = new Scanner(System.in);
+        String keyPressed = pressEnter.next();
+        return !keyPressed.equalsIgnoreCase("Y");
     }
 }

@@ -1,7 +1,6 @@
 package edu.lambton.model.type;
 
 import edu.lambton.model.AccountAbstract;
-import edu.lambton.model.AccountType;
 
 public class SavingAccount extends AccountAbstract {
 
@@ -17,6 +16,7 @@ public class SavingAccount extends AccountAbstract {
         super(accountNumber, balance);
     }
 
+    @Override
     public AccountType getAccountType() {
         return this.accountType;
     }

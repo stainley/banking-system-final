@@ -1,5 +1,6 @@
 package edu.lambton.services;
 
+import edu.lambton.Main;
 import edu.lambton.exception.BankException;
 import edu.lambton.exception.types.*;
 import edu.lambton.file.reader.account.ReadAccountInformation;
@@ -10,22 +11,30 @@ import edu.lambton.file.reader.client.ReadClientDetail;
 import edu.lambton.file.reader.client.ReadClientDetailImpl;
 import edu.lambton.file.reader.credential.CredentialReadFile;
 import edu.lambton.file.reader.credential.CredentialReadFileImpl;
+import edu.lambton.file.reader.transaction.ReadTransaction;
+import edu.lambton.file.reader.transaction.ReadTransactionImpl;
 import edu.lambton.file.writer.account.WriteAccountInformation;
 import edu.lambton.file.writer.account.WriteAccountInformationImpl;
 import edu.lambton.file.writer.client.WriteClientDetail;
 import edu.lambton.file.writer.client.WriteClientDetailImpl;
 import edu.lambton.file.writer.credential.WriteCredentialFile;
 import edu.lambton.file.writer.credential.WriteCredentialFileImpl;
+import edu.lambton.file.writer.transaction.WriteTransaction;
+import edu.lambton.file.writer.transaction.WriteTransactionImpl;
 import edu.lambton.model.AccountAbstract;
-import edu.lambton.model.AccountType;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
+import edu.lambton.model.transaction.Transaction;
+import edu.lambton.model.transaction.TransactionType;
+import edu.lambton.model.type.AccountType;
 import edu.lambton.model.type.ChequingAccount;
 import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.AccountNumberGenerator;
 import edu.lambton.util.DBFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class AccountService {
@@ -249,7 +258,45 @@ public class AccountService {
 
         WriteAccountInformation writeAccountInformation = new WriteAccountInformationImpl();
         writeAccountInformation.writeAccountBalance(accountName, account);
+
+        // Log the transaction into a file
+        Transaction transaction = new Transaction();
+        Main.transactionId = this.createTransactionSequence();
+        transaction.setTransactionId(Main.transactionId);
+        transaction.setUsername(accountName);
+        transaction.setAccount(account);
+        transaction.setTransactionTime(LocalDateTime.now());
+        transaction.setTransactionType(TransactionType.DEPOSIT);
+
+        WriteTransaction<Transaction> writeTransaction = new WriteTransactionImpl();
+        writeTransaction.writeTransactionReport(transaction, money, Main.transactionId);
+
         System.out.println("Money " + money + " deposited in you account. New balance is: $" + newBalance);
+    }
+
+    /**
+     * Obtain the last sequence a return a new sequence incremented
+     *
+     * @return long new sequence
+     */
+    public long createTransactionSequence() {
+        long newSequence;
+        // find the last sequence in the file
+        ReadTransaction<Transaction> readTransaction = new ReadTransactionImpl();
+        try {
+            List<Transaction> transactions = readTransaction.readAllTransaction();
+            newSequence = transactions.stream()
+                    .max(Comparator.comparing(Transaction::getTransactionId))
+                    .orElse(null).getTransactionId();
+
+            // generate a new transaction
+            newSequence += 1;
+            return newSequence;
+        } catch (FileNotFoundException e) {
+            System.out.println("Using the existence sequence");
+            System.out.println(e.getMessage());
+        }
+        return Main.transactionId;
     }
 
     /***

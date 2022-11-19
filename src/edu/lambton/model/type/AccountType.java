@@ -1,4 +1,4 @@
-package edu.lambton.model;
+package edu.lambton.model.type;
 
 public enum AccountType {
     SAVING_ACCOUNT("Saving Account"), CHEQUING_ACCOUNT("Chequing Account");

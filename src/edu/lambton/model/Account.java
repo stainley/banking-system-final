@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
  * @see AccountAbstract
  */
 @Deprecated(since = "Nov 18, 2022", forRemoval = false)
+
 public class Account {
 
     private Long accountNumber;

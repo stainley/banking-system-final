@@ -39,8 +39,10 @@ import java.util.*;
 
 public class AccountService {
 
+
     private Client createUser() {
         List<AccountAbstract> accounts = new ArrayList<>();
+
 
         Scanner input = new Scanner(System.in);
         String username = "";
@@ -59,6 +61,7 @@ public class AccountService {
             }
         }
 
+
         System.out.print("Password: ");
         String password = input.next().trim();
 
@@ -70,18 +73,21 @@ public class AccountService {
 
             // how many account you want to add
             System.out.print("How many account would you like to add? [MAXIMUM 2]");
+
             int numAccounts = input.nextInt();
 
             for (int i = 0; i < numAccounts; i++) {
                 accounts.add(createAccount());
             }
             return new Client(username, accounts);
+
         }
         return null;
     }
 
     private boolean createPassword(String username, String password) {
         WriteCredentialFile writeCredentialFile = new WriteCredentialFileImpl();
+
         StringBuilder sb = new StringBuilder();
         String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());
 
@@ -89,6 +95,7 @@ public class AccountService {
 
         try {
             return writeCredentialFile.writePasswordFile(sb.toString());
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -103,6 +110,7 @@ public class AccountService {
     }
 
     private AccountAbstract createAccount() {
+
         Scanner input = new Scanner(System.in);
 
 
@@ -123,6 +131,7 @@ public class AccountService {
                 accountNumber = new AccountNumberGenerator().generatorAccountNumber();
                 System.out.println("Account number: " + accountNumber);
                 //accountNumber = input.nextLong();
+
 
                 if (!accountNumberIsAvailable(accountNumber)) {
                     throw new AccountNotAvailableException("Account is not available: " + accountNumber);
@@ -147,6 +156,7 @@ public class AccountService {
     private boolean usernameIsAvailable(String username) {
         ReadClientInformation readFileUserInformation = new ReadClientInformationImpl();
         for (String usernameFound : readFileUserInformation.getAllUsernameInformation()) {
+
             if (Objects.equals(usernameFound, username)) {
                 return false;
             }
@@ -157,6 +167,7 @@ public class AccountService {
     private boolean accountNumberIsAvailable(long accountNumber) {
         ReadAccountInformation readAccountInformation = new ReadAccountInformationImpl();
         for (long accNumberFound : readAccountInformation.getAllAccountInformation()) {
+
             if (accNumberFound == accountNumber) {
                 return false;
             }
@@ -200,6 +211,7 @@ public class AccountService {
 
         try {
             writeClientDetail.writeClientDetail(username, registerInfoPersonaData());
+
             System.out.println("User registered successfully.\n\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -218,6 +230,7 @@ public class AccountService {
             } else {
                 return accountsInfFile;
             }
+
 
         } else {
             System.out.println("File doesn't exist. Go back to login menu");
@@ -238,6 +251,7 @@ public class AccountService {
                     return accountsInFile;
                 }
             } else {
+
                 throw new AccountNotFoundException("Account not found");
             }
         } else {
@@ -299,6 +313,7 @@ public class AccountService {
         return Main.transactionId;
     }
 
+
     /***
      * Used to withdraw money from account
      * @param accountName Username of the account
@@ -312,6 +327,7 @@ public class AccountService {
             throw new BankException("Please deposit a positive number greater than 1.");
         }
 
+
         if (balance < money) {
             throw new NotEnoughBalanceException("Transaction could not be  processed. Not enough balance");
         } else {
@@ -320,6 +336,7 @@ public class AccountService {
 
             WriteAccountInformation writeAccountInformation = new WriteAccountInformationImpl();
             writeAccountInformation.writeAccountBalance(accountName, account);
+
         }
     }
 
@@ -331,6 +348,7 @@ public class AccountService {
      * @param amount  Money to be deposited
      */
     public void transferMoney(AccountAbstract fromAccount, Client fromUserAccount, long toAccountNumber, double amount) {
+
         if (fromAccount.getBalance() < amount) {
             throw new NotEnoughBalanceException("Don't enough balance. You balance is: " + fromAccount.getBalance());
         }
@@ -340,6 +358,7 @@ public class AccountService {
 
         // Search user account to be sent money
         Client toUser = getUserByAccountNumber(toAccountNumber);
+
         String toUserName = toUser.getUsername();
 
         // Then deposit money in the other account
@@ -354,6 +373,7 @@ public class AccountService {
     public PersonalData getPersonalData(String username) {
         ReadClientDetail clientDetailReadFile = new ReadClientDetailImpl();
         PersonalData personalData = clientDetailReadFile.getClientInformationByUsername(username);
+
         if (personalData == null) {
             throw new AccountNotFoundException("Cannot find detail");
         }
@@ -368,4 +388,5 @@ public class AccountService {
             throw new RuntimeException(e);
         }
     }
+
 }

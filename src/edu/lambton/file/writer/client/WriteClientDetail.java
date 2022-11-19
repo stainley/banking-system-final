@@ -8,9 +8,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 
 public interface WriteClientDetail extends IWriteFile<BufferedWriter> {
-
     void writeClientDetail(String username, PersonalData data) throws IOException;
-
     void writeClientDetail(Client userAccount);
-
 }

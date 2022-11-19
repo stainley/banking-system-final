@@ -76,24 +76,35 @@ public class Main {
                                         String[] accountsNumber = new String[2];
                                         userFound.getAccounts().forEach(account -> {
                                             if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
-                                                accountsNumber[0] = String.valueOf(account.getAccountNumber());
+                                                accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
                                             } else {
-                                                accountsNumber[1] = String.valueOf(account.getAccountNumber());
+                                                accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
                                             }
                                         });
+
+                                        if(accountsNumber[0] == null) {
+                                            accountsNumber[0] = "0";
+                                        } else if (accountsNumber[1] == null) {
+                                            accountsNumber[1] = "0";
+                                        }
                                         new MainMenu().chooseAccountMenu(accountsNumber);
                                         System.out.print("Select account: [1][2]: ");
                                         int accNumSelected = selectOption.nextInt();
                                         if (accNumSelected == 1 || accNumSelected == 2) {
                                             long finalAccNo1 = Long.parseLong(accountsNumber[accNumSelected - 1]);
-                                            AccountService finalAccountService = accountService;
-                                            double finalMoney1 = money;
-                                            userFound.getAccounts().forEach(account -> {
-                                                if (account.getAccountNumber().equals(finalAccNo1)) {
-                                                    globalAccount = account;
-                                                    finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
-                                                }
-                                            });
+                                            // validate if the account number if > than 0
+                                            if (finalAccNo1 > 0) {
+                                                AccountService finalAccountService = accountService;
+                                                double finalMoney1 = money;
+                                                userFound.getAccounts().forEach(account -> {
+                                                    if (account.getAccountNumber().equals(finalAccNo1)) {
+                                                        globalAccount = account;
+                                                        finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
+                                                    }
+                                                });
+                                            } else {
+                                                System.out.println("Select a valid account number.");
+                                            }
                                         }
                                         break;
                                     case 3:

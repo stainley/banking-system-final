@@ -6,7 +6,5 @@ import java.io.BufferedReader;
 import java.util.List;
 
 public interface ReadAccountInformation extends IReadFile<BufferedReader> {
-
     List<Long> getAllAccountInformation();
-
 }

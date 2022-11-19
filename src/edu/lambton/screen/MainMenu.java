@@ -84,57 +84,6 @@ public class MainMenu {
                 ****************************************************************************************************************
                 """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
     }
-// The user needs to enter the registered name and password to signin into the Account//
-
-    public void Signin() {
-        System.out.println("""
-                ***********************************************************************************************
-                *                           1. Name
-                *                           2. Password
-                *                           3. Go Back
-                ***********************************************************************************************
-                                        
-                """);
-
-    }
-// Myaccounts gives the options to check all your accounts and total amount the user has in the account//
-
-    public void Myaccounts() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                       1. Chequing
-                *                                       2. Savings
-                *                                       3. Total CAD
-                *                                       4. Credit
-                *                                       5. Go back
-                ********************************************************************************************************             
-                """);
-    }
-// Depositmoney option lets the user to deposit the money to one of the accounts//
-
-    public void DepositMoney() {
-        System.out.println("""
-                *****************************************************************************************************
-                *                                      1.Amount
-                *                                      2.Deposit to chequing
-                *                                      3.Deposit to Savings
-                *                                      4.Go Back
-                *****************************************************************************************************                                      
-                                
-                """);
-    }
-// Withdraw option lets the user to withdraw the money from one of the accounts//
-
-    public void WithdrawMoney() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                       1.Amount
-                *                                       2.Withdraw from Chequing
-                *                                       3.Withdraw from Savings
-                *                                       4.Go Back
-                ********************************************************************************************************
-                """);
-    }
 
     // here by using this option the user can send the money or can request the money //
     public void Interacetransfer() {
@@ -147,41 +96,6 @@ public class MainMenu {
                 *                                         5.Manage Transaction
                 *                                         6.Go Back
                 ********************************************************************************************************
-                """);
-    }
-
-    // here the user can pay the bills //
-    public void BillPayments() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                   1.Pay a Bill
-                *                                   2.From Account
-                *                                   3.Next
-                *                                   4.Go Back
-                ********************************************************************************************************
-                """);
-    }
-
-    // this option allow the user to trnafer funds from one acccount to another//
-    public void TransferFunds() {
-        System.out.println("""
-                ************************************************************************************************************
-                * 1.Amount
-                * 2.From Account
-                * 3.To Account
-                * 4.Next
-                * 5.Go back
-                ************************************************************************************************************
-                """);
-    }
-
-    //this option will let the user to know the location of the bank //
-    public void Findus() {
-        System.out.println("""
-                *******************************************************************************************************
-                * 1.Location
-                * 2.Go Back
-                *******************************************************************************************************                
                 """);
     }
 

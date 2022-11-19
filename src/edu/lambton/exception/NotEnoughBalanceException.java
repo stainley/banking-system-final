@@ -1,6 +1,6 @@
 package edu.lambton.exception;
 
-public class NotEnoughBalanceException extends RuntimeException {
+public class NotEnoughBalanceException extends BankException {
 
     public NotEnoughBalanceException(String message) {
         super(message);

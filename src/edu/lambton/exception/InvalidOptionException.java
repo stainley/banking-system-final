@@ -1,6 +1,6 @@
 package edu.lambton.exception;
 
-public class InvalidOptionException extends RuntimeException {
+public class InvalidOptionException extends BankException {
 
     public InvalidOptionException(String message) {
         super(message);

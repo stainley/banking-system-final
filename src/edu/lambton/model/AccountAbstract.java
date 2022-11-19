@@ -4,43 +4,28 @@ import edu.lambton.model.type.AccountType;
 
 import java.time.LocalDateTime;
 
-
-/**
- * @deprecated Account has been deprecated
- * Don't use this type of account anymore
- * @see AccountAbstract
- */
-@Deprecated(since = "Nov 18, 2022", forRemoval = false)
-
-public class Account {
-
+public abstract class AccountAbstract {
     private Long accountNumber;
-    private AccountType accountType;
     private double balance;
     private LocalDateTime creationDate;
 
-    public Account() {
-    }
+    private AccountType accountType;
 
-    public Account(Long accountNumber, AccountType accountType) {
+    protected AccountAbstract(){}
+
+    protected AccountAbstract(Long accountNumber) {
         this.accountNumber = accountNumber;
-        this.accountType = accountType;
         this.creationDate = LocalDateTime.now();
     }
 
-    public Account(Long accountNumber, AccountType accountType, double balance) {
+    protected AccountAbstract(Long accountNumber, double balance) {
         this.accountNumber = accountNumber;
-        this.accountType = accountType;
         this.balance = balance;
         this.creationDate = LocalDateTime.now();
     }
 
     public void setAccountNumber(Long accountNumber) {
         this.accountNumber = accountNumber;
-    }
-
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
     }
 
     public void setBalance(double balance) {
@@ -55,15 +40,19 @@ public class Account {
         return accountNumber;
     }
 
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
     public double getBalance() {
         return balance;
     }
 
     public String getAccountInformation() {
-        return accountNumber + "," + accountType.getString() + "," + balance + "," + creationDate;
+        return accountNumber + "," + balance + "," + creationDate;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
     }
 }

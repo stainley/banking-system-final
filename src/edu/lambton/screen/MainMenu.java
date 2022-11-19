@@ -1,7 +1,11 @@
 package edu.lambton.screen;
 
+import edu.lambton.model.AccountAbstract;
+import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
-import edu.lambton.model.User;
+import edu.lambton.model.type.ChequingAccount;
+import edu.lambton.model.type.SavingAccount;
+
 
 import java.util.Scanner;
 
@@ -25,23 +29,25 @@ public class MainMenu {
 
     public void optionsMenu(String message) {
         System.out.printf("""
-        *********************************************************************************************************
-                                        Welcome %s
-        ---------------------------------------------------------------------------------------------------------
-        *                                                                                                       *
-        *                               1. My Accounts                                                          *
-        *                               2. Deposit Money                                                        *
-        *                               3. Withdraw Money                                                       *
-        *                               4. Transfer Money                                                       *
-        *                               5. Bill Payments                                                        *
-        *                               6. Client Information                                                   *        
-        *                               7. Logout                                                               *
-        ********************************************************************************************************
-        """, message);
+
+                *********************************************************************************************************
+                                                Welcome %s
+                ---------------------------------------------------------------------------------------------------------
+                *                                                                                                       *
+                *                               1. My Accounts                                                          *
+                *                               2. Deposit Money                                                        *
+                *                               3. Withdraw Money                                                       *
+                *                               4. Transfer Money                                                       *
+                *                               5. Bill Payments                                                        *
+                *                               6. Client Information                                                   *        
+                *                               7. Logout                                                               *
+                ********************************************************************************************************
+                """, message);
     }
 
 
-     public boolean showMyAccounts(User userAccounts) {
+    public boolean showMyAccounts(Client userAccounts) {
+
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -74,68 +80,19 @@ public class MainMenu {
 
     public void personalInformationMenu(PersonalData personalData) {
         System.out.printf("""
-        ****************************************************************************************************************
-        *                                 1. Name:          %s
-        *                                 2. Address:       %s
-        *                                 3. Phone:         %s
-        *                                 4. Email:         %s
-        *                                 5. Date Of Birth: %s
-        *                                 6. Go Back
-        ****************************************************************************************************************
-        """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
+                ****************************************************************************************************************
+                *                                 1. Name:          %s
+                *                                 2. Address:       %s
+                *                                 3. Phone:         %s
+                *                                 4. Email:         %s
+                *                                 5. Date Of Birth: %s
+                *                                 6. Go Back
+                ****************************************************************************************************************
+                """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
     }
-// The user needs to enter the registered name and password to signin into the Account//
 
-    public void Signin() {
-        System.out.println("""
-                ***********************************************************************************************
-                *                           1. Name
-                *                           2. Password
-                *                           3. Go Back
-                ***********************************************************************************************
-                                        
-                """);
+    // here by using this option the user can send the money or can request the money //
 
-    }
-// Myaccounts gives the options to check all your accounts and total amount the user has in the account//
-
-    public void Myaccounts() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                       1. Chequing
-                *                                       2. Savings
-                *                                       3. Total CAD
-                *                                       4. Credit
-                *                                       5. Go back
-                ********************************************************************************************************             
-                """);
-    }
-// Depositmoney option lets the user to deposit the money to one of the accounts//
-
-    public void DepositMoney() {
-        System.out.println("""
-                *****************************************************************************************************
-                *                                      1.Amount
-                *                                      2.Deposit to chequing
-                *                                      3.Deposit to Savings
-                *                                      4.Go Back              
-                *****************************************************************************************************                                      
-                                
-                """);
-    }
-// Withdraw option lets the user to withdraw the money from one of the accounts//
-
-    public void WithdrawMoney() {
-        System.out.println("""
-                ********************************************************************************************************
-                *                                       1.Amount
-                *                                       2.Withdraw from Chequing
-                *                                       3.Withdraw from Savings
-                *                                       4.Go Back
-                ********************************************************************************************************
-                """);
-    }
-// here by using this option the user can send the money or can request the money //
     public void Interacetransfer() {
         System.out.println("""
                 ********************************************************************************************************
@@ -148,38 +105,56 @@ public class MainMenu {
                 ********************************************************************************************************
                 """);
     }
-// here the user can pay the bills //
-    public void BillPayments() {
+
+    public void payBillMenu() {
         System.out.println("""
                 ********************************************************************************************************
-                *                                   1.Pay a Bill
-                *                                   2.From Account
-                *                                   3.Next
-                *                                   4.Go Back
+                *                                         BILL PAYMENT OPTION
+                *-------------------------------------------------------------------------------------------------------
+                *                                   1. Telecommunication
+                *                                   2. Hydro
+                *                                   3. Water
+                *                                   4. College
+                *                                   5. Housing
                 ********************************************************************************************************
                 """);
-    }
-// this option allow the user to trnafer funds from one acccount to another//
-    public void TransferFunds() {
-    System.out.println("""
-            ************************************************************************************************************
-            * 1.Amount
-            * 2.From Account
-            * 3.To Account
-            * 4.Next
-            * 5.Go back
-            ************************************************************************************************************
-            """);
     }
 
-    //this option will let the user to know the location of the bank //
-    public void Findus()
-    {
-        System.out.println("""
-                *******************************************************************************************************
-                * 1.Location
-                * 2.Go Back
-                *******************************************************************************************************                
-                """);
+    public void chooseAccountMenu(String[] accountNumber) {
+        System.out.printf("""
+                ********************************************************************************************************
+                *                                         CHOOSE ACCOUNT OPTION
+                *-------------------------------------------------------------------------------------------------------
+                *                                   1. Chequing Account: %s
+                *                                   2. Saving Account: %s
+                ********************************************************************************************************
+                %n""", accountNumber[0], accountNumber[1]);
+    }
+
+    public boolean reportSuccessTransaction(AccountAbstract account, int trasactionId) {
+        StringBuilder typeAccount = new StringBuilder();
+        if (account instanceof SavingAccount) {
+            typeAccount.append(account.getAccountType().getString());
+        } else if (account instanceof ChequingAccount) {
+            typeAccount.append(account.getAccountType().getString());
+        } else {
+            System.err.println("Invalid type account");
+        }
+
+        System.out.printf("""
+                #############################################################################
+                #                            ACCOUNT INFORMATION
+                #############################################################################
+                #       Transaction ID: %s
+                #       Account Number: %s
+                #           - Account Type: %s
+                #           - Balance: %s
+                #############################################################################
+                %n""", trasactionId, account.getAccountNumber(), typeAccount, account.getBalance());
+        System.out.print("Press Y to return. ");
+        Scanner pressEnter = new Scanner(System.in);
+        String keyPressed = pressEnter.next();
+        return !keyPressed.equalsIgnoreCase("Y");
+
     }
 }

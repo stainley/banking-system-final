@@ -17,7 +17,8 @@ public class WriteClientDetailImpl implements WriteClientDetail {
     public void writeClientDetail(String username, PersonalData data) {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(DBFile.DB_PERSONAL_INFORMATION, true))) {
-            bufferedWriter.write(username + "," + data.toString() + "\n");
+            bufferedWriter.newLine();
+            bufferedWriter.write(username + "," + data.toString());
             bufferedWriter.flush();
 
             this.closeFile(bufferedWriter);

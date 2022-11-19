@@ -6,6 +6,7 @@ import edu.lambton.util.DBFile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class ReadClientDetailImpl implements ReadClientDetail {
 
@@ -17,7 +18,7 @@ public class ReadClientDetailImpl implements ReadClientDetail {
                 String row = br.readLine();
                 String[] column = row.split(",");
                 if (column[0].equals(username)) {
-                    return new PersonalData(column[1], Integer.parseInt(column[3]), column[2], column[5], column[4]);
+                    return new PersonalData(column[1], LocalDate.now().getYear() - Integer.parseInt(column[3]), column[2], column[5], column[4]);
                 }
             }
             this.closeFile(br);

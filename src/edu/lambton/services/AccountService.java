@@ -32,11 +32,15 @@ import edu.lambton.model.type.SavingAccount;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.util.AccountNumberGenerator;
 import edu.lambton.util.DBFile;
+import edu.lambton.util.MenuUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class AccountService {
 
@@ -44,7 +48,7 @@ public class AccountService {
         List<AccountAbstract> accounts = new ArrayList<>();
 
         Scanner input = new Scanner(System.in);
-        String username = "";
+        String username;
 
         while (true) {
             try {
@@ -67,7 +71,16 @@ public class AccountService {
 
         if (isPasswordCreated) {
             System.out.println("PERSONAL INFORMATION");
-            register(username);
+            while(true) {
+                try {
+                    register(username);
+                    break;
+                } catch (BankException bankException) {
+                    System.err.println(bankException.getMessage());
+                    System.out.println("Try again.");
+                    MenuUtil.clearScreen();
+                }
+            }
 
             // how many account you want to add
             System.out.print("How many account would you like to add? [MAXIMUM 2]");
@@ -123,7 +136,6 @@ public class AccountService {
             try {
                 accountNumber = new AccountNumberGenerator().generatorAccountNumber();
                 System.out.println("Account number: " + accountNumber);
-                //accountNumber = input.nextLong();
 
                 if (!accountNumberIsAvailable(accountNumber)) {
                     throw new AccountNotAvailableException("Account is not available: " + accountNumber);
@@ -176,15 +188,32 @@ public class AccountService {
     private PersonalData registerInfoPersonaData() {
         Scanner inputData = new Scanner(System.in);
         System.out.print("Name: ");
-        String name = inputData.next();
+        String name = inputData.useDelimiter("\n").next();
         System.out.print("Address: ");
         StringBuilder address = new StringBuilder();
-        address.append(inputData.useDelimiter("\n").next());
+        String addressClean = inputData.useDelimiter("\n").next();
+        if (addressClean.contains(",")) {
+            String collect = Arrays.stream(addressClean.split(","))
+                    .map(value -> value + " ")
+                    .collect(Collectors.joining());
+            address.append(collect);
+        } else {
+            address.append(addressClean);
+        }
+
 
         System.out.print("Birth of Year: ");
         int birthOfYear = inputData.nextInt();
+        if (birthOfYear < 1 || birthOfYear > LocalDate.now().getYear() || (LocalDate.now().getYear() - birthOfYear >= 150)) {
+            throw new InvalidFormatException("Bad year format");
+        }
         System.out.print("Email: ");
         String email = inputData.next();
+        String emailRegex = "^(.+)@(\\\\S+)$";
+        if (email.isEmpty() || patternMatches(email, emailRegex)) {
+            throw new InvalidFormatException("Bad email format");
+        }
+
         System.out.print("Phone Number: ");
         String phone = inputData.next();
 
@@ -204,6 +233,8 @@ public class AccountService {
             System.out.println("User registered successfully.\n\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (InvalidFormatException ife) {
+            throw new InvalidFormatException(ife.getMessage());
         }
     }
 
@@ -378,5 +409,10 @@ public class AccountService {
         return personalData;
     }
 
+    public static boolean patternMatches(String emailAddress, String regexPattern) {
+        return Pattern.compile(regexPattern)
+                .matcher(emailAddress)
+                .matches();
+    }
 
 }

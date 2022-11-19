@@ -19,6 +19,7 @@ public class Main {
     public static AccountAbstract globalAccount;
     static final String[] validOptionNumbers = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
+
     public static void main(String[] args) {
         boolean keepRunning = true;
         AccountService accountService;
@@ -33,7 +34,9 @@ public class Main {
 
                 int option = 0;
                 String stringNumber = selectOption.next();
+
                 for (String number : validOptionNumbers) {
+
                     if (Objects.equals(number, stringNumber)) {
                         option = Integer.parseInt(stringNumber);
                     }
@@ -53,7 +56,9 @@ public class Main {
 
                         try {
                             boolean keep = true;
+
                             Client userFound = accountService.login(userName, password);
+
 
                             while (keep) {
 
@@ -65,6 +70,7 @@ public class Main {
                                 switch (accOptions) {
                                     case 1:
                                         // SHOW MY ACCOUNT INFO
+
                                         while (true) {
                                             if (!mainMenu.showMyAccounts(userFound)) {
                                                 break;
@@ -72,7 +78,7 @@ public class Main {
                                         }
                                         break;
                                     case 2:
-                                        // DEPOSIT MONEY
+
                                         System.out.println("Deposit Money");
                                         // Invoke deposit money
                                         System.out.print("Please type amount: $");
@@ -165,6 +171,7 @@ public class Main {
                                         break;
                                     case 4:
                                         // TRANSFER MONEY IN THE SAME ACCOUNT OR DIFFERENT ACCOUNT
+
                                         while (true) {
                                             try {
                                                 System.out.println("Transfer money to another account");
@@ -207,6 +214,7 @@ public class Main {
                                             break;
                                         }
                                         break;
+
                                     default:
                                         System.out.println("Invalid option.  Choose an option");
                                 }
@@ -282,6 +290,7 @@ public class Main {
         // Find the account we want to use from one or more accounts
 
     }
+
 
 }
 

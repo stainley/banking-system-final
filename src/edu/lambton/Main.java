@@ -31,7 +31,7 @@ public class Main {
         boolean keepRunning = true;
         AccountServiceImpl accountService;
         MainMenu mainMenu = MainMenu.getInstance();
-        long accNo;
+
         while (keepRunning) {
             MenuUtil.getInstance().clearScreen();
             mainMenu.createMainScreen();
@@ -249,10 +249,20 @@ public class Main {
 
         } catch (AccountNotFoundException acn) {
             System.err.println("Account doesn't exists, please select another account");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         } catch (InvalidCredentialException ice) {
             System.err.printf("""
                                           Error Message: %s
                     """, ice.getMessage());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

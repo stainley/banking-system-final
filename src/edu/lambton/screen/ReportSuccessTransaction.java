@@ -27,9 +27,10 @@ public class ReportSuccessTransaction {
         return instance;
     }
 
-    public boolean reportSuccessTransaction(AccountAbstract account, long transactionId) {
+    public boolean reportSuccessTransaction(AccountAbstract account, double amount, long transactionId) {
         clearHelper(account);
         StringBuilder typeAccount = new StringBuilder();
+        typeAccount.append(account.getAccountType().getString());
 
         System.out.printf("""
                 #############################################################################
@@ -38,9 +39,10 @@ public class ReportSuccessTransaction {
                 #       Transaction ID: %s
                 #       Account Number: %s
                 #           - Account Type: %s
-                #           - Balance: %s
+                #           - New Balance: %s
+                #           - Amount: %s
                 #############################################################################
-                %n""", transactionId, account.getAccountNumber(), typeAccount, String.format(MONEY_FORMAT, account.getBalance()));
+                %n""", transactionId, account.getAccountNumber(), typeAccount, String.format(MONEY_FORMAT, account.getBalance()), String.format(MONEY_FORMAT, amount));
         System.out.print(PRESS_Y_TO_RETURN);
         Scanner pressEnter = new Scanner(System.in);
         String keyPressed = pressEnter.next();
@@ -63,6 +65,7 @@ public class ReportSuccessTransaction {
     public void reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, String companyName, long transactionId) {
         clearHelper(fromAccount);
         StringBuilder typeAccount = new StringBuilder();
+        typeAccount.append(fromAccount.getAccountType().getString());
         System.out.printf("""
                         #############################################################################
                         #                            ACCOUNT INFORMATION

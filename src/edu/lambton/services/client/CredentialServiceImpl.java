@@ -3,6 +3,7 @@ package edu.lambton.services.client;
 import edu.lambton.exception.BankException;
 import edu.lambton.exception.types.AccountNotAvailableException;
 import edu.lambton.exception.types.InvalidFormatException;
+import edu.lambton.exception.types.InvalidOptionException;
 import edu.lambton.file.reader.account.ReadAccountInformation;
 import edu.lambton.file.reader.account.ReadAccountInformationImpl;
 import edu.lambton.file.reader.account.ReadClientInformation;
@@ -86,7 +87,9 @@ public class CredentialServiceImpl implements CredentialService {
             // how many account you want to add
             System.out.print("How many account would you like to add? [MAXIMUM 2]");
             int numAccounts = input.nextInt();
-
+            if (numAccounts == 0 || numAccounts > 2) {
+                throw new InvalidOptionException("You only can create 1 or 2 accounts.");
+            }
             for (int i = 0; i < numAccounts; i++) {
                 accounts.add(createAccount());
             }

@@ -1,13 +1,19 @@
 package edu.lambton.file.reader.transaction;
 
 import edu.lambton.file.ValidateFile;
+import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.transaction.Transaction;
+import edu.lambton.model.transaction.TransactionType;
+import edu.lambton.model.type.AccountType;
+import edu.lambton.model.type.ChequingAccount;
+import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.DBFile;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +29,38 @@ public class ReadTransactionImpl extends ValidateFile implements ReadTransaction
                 while (readerFile.ready()) {
                     String line = readerFile.readLine();
                     String[] columns = line.split(",");
-                    System.out.println(columns[0]);
-                    System.out.println(columns[1]);
-                    System.out.println(columns[2]);
+                    long transactionId = Long.parseLong(columns[0]);
+                    String username = columns[1];
+                    long accountNumber = Long.parseLong(columns[2]);
+                    String accountType = columns[3];
+                    double balance = Double.parseDouble(columns[4]);
+                    String transactionDate = columns[5];
+                    String typeTransaction = columns[6];
+                    String amount = columns[7];
 
-                    transactions.add(new Transaction(Long.parseLong(columns[0]), columns[1], null, null, null));
+                    TransactionType transactionType;
+                    if (typeTransaction.equals(TransactionType.WITHDRAW.name())) {
+                        transactionType = TransactionType.WITHDRAW;
+                    } else {
+                        transactionType = TransactionType.DEPOSIT;
+                    }
+
+                    AccountAbstract account;
+                    if (accountType.equals(AccountType.SAVING_ACCOUNT.name())) {
+                        account = new SavingAccount();
+                        account.setAccountNumber(accountNumber);
+                        account.setAccountType(AccountType.SAVING_ACCOUNT);
+                        account.setBalance(balance);
+                    } else {
+                        account = new ChequingAccount();
+                        account.setAccountNumber(accountNumber);
+                        account.setAccountType(AccountType.CHEQUING_ACCOUNT);
+                        account.setBalance(balance);
+                    }
+
+                    Transaction transaction = new Transaction(transactionId, username, transactionType, account, LocalDateTime.parse(transactionDate));
+
+                    transactions.add(transaction);
                 }
                 this.closeFile(readerFile);
             } catch (IOException ioe) {

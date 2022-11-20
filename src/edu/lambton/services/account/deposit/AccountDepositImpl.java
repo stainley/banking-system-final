@@ -1,5 +1,6 @@
 package edu.lambton.services.account.deposit;
 
+import edu.lambton.exception.types.NegativeBalanceException;
 import edu.lambton.file.writer.account.WriteAccountInformation;
 import edu.lambton.file.writer.account.WriteAccountInformationImpl;
 import edu.lambton.file.writer.transaction.WriteTransaction;

@@ -50,12 +50,14 @@ public class ReadTransactionImpl extends ValidateFile implements ReadTransaction
                         account = new SavingAccount();
                         account.setAccountNumber(accountNumber);
                         account.setAccountType(AccountType.SAVING_ACCOUNT);
-                        account.setBalance(balance);
+                        account.setCreationDate(LocalDateTime.parse(transactionDate));
+                        account.setBalance(Double.parseDouble(amount));
                     } else {
                         account = new ChequingAccount();
                         account.setAccountNumber(accountNumber);
                         account.setAccountType(AccountType.CHEQUING_ACCOUNT);
-                        account.setBalance(balance);
+                        account.setBalance(Double.parseDouble(amount));
+                        account.setCreationDate(LocalDateTime.parse(transactionDate));
                     }
 
                     Transaction transaction = new Transaction(transactionId, username, transactionType, account, LocalDateTime.parse(transactionDate));

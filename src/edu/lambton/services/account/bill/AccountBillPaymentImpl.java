@@ -34,10 +34,10 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
 
     @Override
     public void transferMoneyToAccount(Client fromUserAccount) {
-        System.out.println("""
-                ################################################################################
-                #                           BILL PAYMENT OPTION                                #
-                ################################################################################
+        System.out.println("""                
+                ########################################################################################################
+                #                                           BILL PAYMENT OPTION                                        #
+                ########################################################################################################
                 """);
         String[] accountsNumber = new String[2];
         Scanner input = new Scanner(System.in);

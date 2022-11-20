@@ -16,8 +16,6 @@ import java.util.List;
 import static java.lang.System.err;
 
 public class WriteAccountInformationImpl implements WriteAccountInformation {
-
-
     @Override
     public void writeAccountBalance(String owner, AccountAbstract account) {
         try {

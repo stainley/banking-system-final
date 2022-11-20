@@ -137,9 +137,9 @@ public class Main {
                             try {
 
                                 System.out.println("""
-                                        ################################################################################
-                                        #                           WITHDRAW OPTION                                    #
-                                        ################################################################################
+                                        ########################################################################################################
+                                        #                                           WITHDRAW OPTION                                            #
+                                        ########################################################################################################
                                         """);
                                 System.out.print("Please type amount: $");
                                 money = selectOption.nextDouble();
@@ -178,9 +178,14 @@ public class Main {
                         break;
                     case 4:
                         // TRANSFER MONEY DIFFERENT ACCOUNT
+                        MenuUtil.getInstance().clearScreen();
                         while (true) {
                             try {
-                                System.out.println("Transfer money to another account");
+                                System.out.println("""
+                                        ########################################################################################################
+                                        #                                       TRANSFER MONEY OPTION                                          #
+                                        ########################################################################################################
+                                        """);
                                 AccountTransferImpl accountTransference = AccountTransferImpl.getInstance();
                                 accountTransference.transferMoneyToAccount(userFound);
                                 break;

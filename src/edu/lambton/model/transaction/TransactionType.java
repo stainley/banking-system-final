@@ -6,7 +6,6 @@ public enum TransactionType {
         this.description = description;
     }
     private final String description;
-
     public String getDescription() {
         return this.description;
     }

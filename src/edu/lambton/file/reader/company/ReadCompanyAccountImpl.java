@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReadCompanyAccountImpl implements ReadCompanyAccount<CompanyAccount> {
-
-
     @Override
     public List<CompanyAccount> readAllCompanyAccount() {
         int header = 0;

@@ -19,5 +19,4 @@ public interface WriteAccountInformation extends IWriteFile<BufferedWriter> {
      */
     @Deprecated(since = "Nov 18,2022")
     void writeClientDetail(Account accountData) throws IOException;
-
 }

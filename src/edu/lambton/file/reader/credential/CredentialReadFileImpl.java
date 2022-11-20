@@ -40,6 +40,4 @@ public class CredentialReadFileImpl extends ValidateFile implements CredentialRe
             System.out.println("An error has occurred: " + ioException.getMessage());
         }
     }
-
-
 }

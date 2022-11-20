@@ -2,6 +2,7 @@ package edu.lambton.services;
 
 import edu.lambton.exception.types.AccountNotFoundException;
 import edu.lambton.exception.types.InvalidCredentialException;
+import edu.lambton.exception.types.InvalidOptionException;
 import edu.lambton.file.reader.account.ReadClientInformation;
 import edu.lambton.file.reader.account.ReadClientInformationImpl;
 import edu.lambton.file.reader.client.ReadClientDetail;
@@ -28,7 +29,11 @@ public class AccountServiceImpl extends AccountService {
     public void registerAccount() {
         CredentialService credentialService = new CredentialServiceImpl();
         WriteClientDetail writeClientDetail = new WriteClientDetailImpl();
-        writeClientDetail.writeClientDetail(credentialService.createUser());
+        try {
+            writeClientDetail.writeClientDetail(credentialService.createUser());
+        } catch (InvalidOptionException ioe) {
+            System.out.println(ioe.getMessage());
+        }
     }
 
     public Client login(String accountName, String password) {

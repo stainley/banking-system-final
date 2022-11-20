@@ -1,6 +1,5 @@
 package edu.lambton.services.account.deposit;
 
-import edu.lambton.exception.types.NegativeBalanceException;
 import edu.lambton.file.writer.account.WriteAccountInformation;
 import edu.lambton.file.writer.account.WriteAccountInformationImpl;
 import edu.lambton.file.writer.transaction.WriteTransaction;
@@ -10,6 +9,7 @@ import edu.lambton.model.transaction.Transaction;
 import edu.lambton.model.transaction.TransactionType;
 import edu.lambton.services.transaction.TransactionServiceImpl;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
 import static edu.lambton.Main.transactionId;
@@ -36,6 +36,6 @@ public class AccountDepositImpl implements AccountDeposit {
         WriteTransaction<Transaction> writeTransaction = new WriteTransactionImpl();
         writeTransaction.writeTransactionReport(transaction, money, transactionId);
 
-        System.out.println("Money " + money + " deposited in you account.");
+        System.out.println(MessageFormat.format("Deposit of {0} has been completed successfully.  For more detailed information please see transaction form below.", money));
     }
 }

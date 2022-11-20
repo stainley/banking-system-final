@@ -2,7 +2,6 @@ package edu.lambton.screen;
 
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
-import edu.lambton.util.MenuUtil;
 
 import java.util.Scanner;
 
@@ -22,7 +21,7 @@ public class MainMenu {
 
 
     public void createMainScreen() {
-        MenuUtil.getInstance().clearScreen();
+        //MenuUtil.getInstance().clearScreen();
         System.out.println("""
                 ********************************************************************************************************
                 *                                                                                                      *
@@ -36,7 +35,7 @@ public class MainMenu {
     }
 
     public void optionsMenu(String message) {
-        MenuUtil.getInstance().clearScreen();
+        //MenuUtil.getInstance().clearScreen();
         System.out.printf("""
                 *********************************************************************************************************
                                                 Welcome %s
@@ -56,7 +55,7 @@ public class MainMenu {
 
 
     public boolean showMyAccounts(Client userAccounts) {
-        MenuUtil.getInstance().clearScreen();
+        //MenuUtil.getInstance().clearScreen();
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -72,9 +71,9 @@ public class MainMenu {
             accountType[0] = account.getAccountType().getString();
             balance[0] = String.format("$%,3.2f", account.getBalance());
             System.out.printf("""
-                    #       Account Number: %s                                                  
-                    #           - Account Type: %s                                              
-                    #           - Balance: %s                                                   
+                    #       Account Number: %s
+                    #           - Account Type: %s
+                    #           - Balance: %s
                     #---------------------------------------------------------------------------
                     """, accountNumber[0], accountType[0], balance[0]);
         });
@@ -85,8 +84,7 @@ public class MainMenu {
         return !keyPressed.equalsIgnoreCase("Y");
     }
 
-// The user gets Registered here by filling the form with the options below//
-
+    // The user gets Registered here by filling the form with the options below//
     public void personalInformationMenu(PersonalData personalData) {
         System.out.printf("""
                 ****************************************************************************************************************
@@ -122,6 +120,8 @@ public class MainMenu {
                 *                                   1. Chequing Account: %s
                 *                                   2. Saving Account: %s
                 ********************************************************************************************************
-                %n""", accountNumber[0], accountNumber[1]);
+                %n""",
+                accountNumber[0].equals("0") ? "" : accountNumber[0],
+                accountNumber[1].equals("0") ? "" : accountNumber[1]);
     }
 }

@@ -4,7 +4,17 @@ import java.io.IOException;
 
 public class MenuUtil {
 
-    public static void clearScreen() {
+    private static MenuUtil instance;
+    private MenuUtil(){}
+
+    public static MenuUtil getInstance() {
+        if(instance == null) {
+            instance = new MenuUtil();
+        }
+        return instance;
+    }
+
+    public void clearScreen() {
         final String os = System.getProperty("os.name");
         if (os.contains("Windows")) {
             try {
@@ -13,8 +23,7 @@ public class MenuUtil {
                 System.err.println(e.getMessage());
             }
         } else {
-                //Runtime.getRuntime().exec("clear");
-                System.out.print("\033\143");
+            System.out.print("\033\143");
         }
 
     }

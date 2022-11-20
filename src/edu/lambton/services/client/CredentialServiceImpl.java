@@ -80,6 +80,11 @@ public class CredentialServiceImpl implements CredentialService {
                 } catch (BankException bankException) {
                     System.err.println(bankException.getMessage());
                     System.out.println("Try again.");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
+                    }
                     MenuUtil.getInstance().clearScreen();
                 }
             }

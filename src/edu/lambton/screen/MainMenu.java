@@ -21,7 +21,6 @@ public class MainMenu {
 
 
     public void createMainScreen() {
-        //MenuUtil.getInstance().clearScreen();
         System.out.println("""
                 ********************************************************************************************************
                 *                                                                                                      *
@@ -35,7 +34,7 @@ public class MainMenu {
     }
 
     public void optionsMenu(String message) {
-        //MenuUtil.getInstance().clearScreen();
+        // MenuUtil.getInstance().clearScreen();
         System.out.printf("""
                 *********************************************************************************************************
                                                 Welcome %s

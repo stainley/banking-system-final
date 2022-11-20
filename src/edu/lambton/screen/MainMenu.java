@@ -1,21 +1,28 @@
 package edu.lambton.screen;
 
-import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.PersonalData;
-import edu.lambton.model.transaction.Transaction;
-import edu.lambton.model.type.ChequingAccount;
-import edu.lambton.model.type.SavingAccount;
 import edu.lambton.util.MenuUtil;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class MainMenu {
-// This is the main menu where the user can get registered and  if is already registered then can sign in or can exit//
+
+    private static MainMenu instance;
+
+    private MainMenu() {
+    }
+
+    public static MainMenu getInstance() {
+        if (instance == null) {
+            instance = new MainMenu();
+        }
+        return instance;
+    }
+
 
     public void createMainScreen() {
-        MenuUtil.clearScreen();
+        MenuUtil.getInstance().clearScreen();
         System.out.println("""
                 ********************************************************************************************************
                 *                                                                                                      *
@@ -27,10 +34,9 @@ public class MainMenu {
                 """);
 
     }
-// THis is the options menu where user can have multiple options to do the transactions//
 
     public void optionsMenu(String message) {
-        MenuUtil.clearScreen();
+        MenuUtil.getInstance().clearScreen();
         System.out.printf("""
                 *********************************************************************************************************
                                                 Welcome %s
@@ -50,7 +56,7 @@ public class MainMenu {
 
 
     public boolean showMyAccounts(Client userAccounts) {
-        MenuUtil.clearScreen();
+        MenuUtil.getInstance().clearScreen();
         final String[] accountNumber = new String[1];
         final String[] accountType = new String[1];
         final String[] balance = new String[1];
@@ -89,13 +95,10 @@ public class MainMenu {
                 *                                 3. Phone:         %s
                 *                                 4. Email:         %s
                 *                                 5. Age:           %s
-                *                                 6. Go Back
+                *
                 ****************************************************************************************************************
                 """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
     }
-
-    // here by using this option the user can send the money or can request the money //
-
 
     public void payBillMenu() {
         System.out.println("""
@@ -120,122 +123,5 @@ public class MainMenu {
                 *                                   2. Saving Account: %s
                 ********************************************************************************************************
                 %n""", accountNumber[0], accountNumber[1]);
-    }
-
-    public boolean reportSuccessTransaction(AccountAbstract account, long transactionId) {
-        MenuUtil.clearScreen();
-        StringBuilder typeAccount = new StringBuilder();
-        if (account instanceof SavingAccount) {
-            typeAccount.append(account.getAccountType().getString());
-        } else if (account instanceof ChequingAccount) {
-            typeAccount.append(account.getAccountType().getString());
-        } else {
-            System.err.println("Invalid type account");
-        }
-
-        System.out.printf("""
-                #############################################################################
-                #                            ACCOUNT INFORMATION
-                #############################################################################
-                #       Transaction ID: %s
-                #       Account Number: %s
-                #           - Account Type: %s
-                #           - Balance: %s
-                #############################################################################
-                %n""", transactionId, account.getAccountNumber(), typeAccount, String.format("$%,3.2f", account.getBalance()));
-        System.out.print("Press Y to return. ");
-        Scanner pressEnter = new Scanner(System.in);
-        String keyPressed = pressEnter.next();
-        return !keyPressed.equalsIgnoreCase("Y");
-    }
-
-    public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, String companyName, long transactionId) {
-        MenuUtil.clearScreen();
-        StringBuilder typeAccount = new StringBuilder();
-        if (fromAccount instanceof SavingAccount) {
-            typeAccount.append(fromAccount.getAccountType().getString());
-        } else if (fromAccount instanceof ChequingAccount) {
-            typeAccount.append(fromAccount.getAccountType().getString());
-        } else {
-            System.err.println("Invalid type account");
-        }
-
-        System.out.printf("""
-                        #############################################################################
-                        #                            ACCOUNT INFORMATION
-                        #############################################################################
-                        #       Transaction ID: %s
-                        #       From: Account Number: %s
-                        #           - Account Type: %s
-                        #           - Balance: %s
-                        #       To: Account Name: %s
-                        #           - Amount: %s
-                        #############################################################################
-                        %n""",
-                transactionId,
-                fromAccount.getAccountNumber(),
-                typeAccount, String.format("$%,3.2f", fromAccount.getBalance()),
-                companyName,
-                String.format("$%,3.2f", toAccount.getBalance()));
-
-        System.out.print("Press Y to return. ");
-        Scanner pressEnter = new Scanner(System.in);
-        String keyPressed = pressEnter.next();
-        return !keyPressed.equalsIgnoreCase("Y");
-    }
-
-    public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, long transactionId) {
-        MenuUtil.clearScreen();
-        StringBuilder typeAccount = new StringBuilder();
-        if (fromAccount instanceof SavingAccount) {
-            typeAccount.append(fromAccount.getAccountType().getString());
-        } else if (fromAccount instanceof ChequingAccount) {
-            typeAccount.append(fromAccount.getAccountType().getString());
-        } else {
-            System.err.println("Invalid type account");
-        }
-
-        System.out.printf("""
-                        #############################################################################
-                        #                            ACCOUNT INFORMATION
-                        #############################################################################
-                        #       Transaction ID: %s
-                        #       From: Account Number: %s
-                        #           - Account Type: %s
-                        #           - Balance: %s
-                        #       To: Account Number: %s
-                        #           - Amount: %s
-                        #############################################################################
-                        %n""",
-                transactionId,
-                fromAccount.getAccountNumber(),
-                typeAccount, String.format("$%,3.2f", fromAccount.getBalance()),
-                toAccount.getAccountNumber(),
-                String.format("$%,3.2f", toAccount.getBalance()));
-
-        System.out.print("Press Y to return. ");
-        Scanner pressEnter = new Scanner(System.in);
-        String keyPressed = pressEnter.next();
-        return !keyPressed.equalsIgnoreCase("Y");
-    }
-
-    public void reportAllTransactionMenuByUsername(List<Transaction> transactions) {
-        System.out.print("""
-                ********************************************************************************************************
-                *                                      REPORT TRANSACTIONS
-                ********************************************************************************************************
-                """);
-
-        transactions.forEach(transaction -> {
-            System.out.println(transaction.getTransactionId() + " | " +
-                    transaction.getTransactionType() + " | " +
-                    transaction.getTransactionTime() + " | " +
-                    transaction.getAccount().getAccountNumber() + " | " +
-                    transaction.getAccount().getAccountInformation() + " | " +
-                    transaction.getTransactionType());
-            System.out.println("-----------------------------------------------------------------------------------------");
-        });
-
-
     }
 }

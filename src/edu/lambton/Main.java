@@ -6,11 +6,12 @@ import edu.lambton.exception.types.NegativeBalanceException;
 import edu.lambton.exception.types.NotEnoughBalanceException;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
-import edu.lambton.model.CompanyAccount;
 import edu.lambton.model.PersonalData;
 import edu.lambton.model.transaction.Transaction;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
+import edu.lambton.screen.ReportSuccessTransaction;
+import edu.lambton.screen.ReportTransaction;
 import edu.lambton.services.AccountServiceImpl;
 import edu.lambton.services.account.bill.AccountBillPayment;
 import edu.lambton.services.account.bill.AccountBillPaymentImpl;
@@ -31,7 +32,7 @@ public class Main {
     public static void main(String[] args) {
         boolean keepRunning = true;
         AccountServiceImpl accountService;
-        MainMenu mainMenu = new MainMenu();
+        MainMenu mainMenu = MainMenu.getInstance();
         long accNo;
         while (keepRunning) {
             mainMenu.createMainScreen();
@@ -59,187 +60,7 @@ public class Main {
 
                         System.out.print("Enter password: ");
                         String password = selectOption.next().trim();
-
-                        try {
-                            boolean keep = true;
-                            Client userFound = accountService.login(userName, password);
-
-                            while (keep) {
-
-                                mainMenu.optionsMenu(userName);
-                                System.out.print("Please select an option: ");
-                                int accOptions = selectOption.nextInt();
-                                double money;
-                                String[] accountsNumber = new String[2];
-                                switch (accOptions) {
-                                    case 1:
-                                        // SHOW MY ACCOUNT INFO
-                                        while (true) {
-                                            if (!mainMenu.showMyAccounts(userFound)) {
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    case 2:
-                                        // DEPOSIT MONEY
-                                        MenuUtil.clearScreen();
-                                        System.out.println("Deposit Money");
-                                        // Invoke deposit money
-                                        System.out.print("Please type amount: $");
-                                        money = selectOption.nextDouble();
-                                        userFound.getAccounts().forEach(account -> {
-                                            if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
-                                                accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-                                            } else {
-                                                accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-                                            }
-                                        });
-
-                                        if (accountsNumber[0] == null) {
-                                            accountsNumber[0] = "0";
-                                        } else if (accountsNumber[1] == null) {
-                                            accountsNumber[1] = "0";
-                                        }
-                                        new MainMenu().chooseAccountMenu(accountsNumber);
-                                        System.out.print("Select account: [1][2]: ");
-                                        int accNumSelected = selectOption.nextInt();
-                                        if (accNumSelected == 1 || accNumSelected == 2) {
-                                            long finalAccNo1 = Long.parseLong(accountsNumber[accNumSelected - 1]);
-                                            // validate if the account number if > than 0
-                                            if (finalAccNo1 > 0) {
-                                                AccountServiceImpl finalAccountService = accountService;
-                                                double finalMoney1 = money;
-                                                userFound.getAccounts().forEach(account -> {
-                                                    if (account.getAccountNumber().equals(finalAccNo1)) {
-                                                        globalAccount = account;
-                                                        finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
-                                                        new MainMenu().reportSuccessTransaction(account, Main.transactionId);
-                                                    }
-                                                });
-                                            } else {
-                                                System.out.println("Select a valid account number.");
-                                            }
-                                        }
-                                        break;
-                                    case 3:
-                                        // WITHDRAW OPERATION
-                                        while (true) {
-                                            try {
-
-                                                System.out.println("Withdraw Money");
-                                                System.out.print("Please type amount: $");
-                                                money = selectOption.nextDouble();
-
-                                                System.out.print("Select account: ");
-
-                                                userFound.getAccounts().forEach(account -> {
-                                                    if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
-                                                        accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-                                                    } else {
-                                                        accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-                                                    }
-                                                });
-
-                                                if (accountsNumber[0] == null) {
-                                                    accountsNumber[0] = "0";
-                                                } else if (accountsNumber[1] == null) {
-                                                    accountsNumber[1] = "0";
-                                                }
-                                                new MainMenu().chooseAccountMenu(accountsNumber);
-                                                System.out.print("Select account: [1][2]: ");
-
-                                                int withdrawAccNumSelected = selectOption.nextInt();
-                                                if (withdrawAccNumSelected == 1 || withdrawAccNumSelected == 2) {
-                                                    long finalAccNo1 = Long.parseLong(accountsNumber[withdrawAccNumSelected - 1]);
-                                                    if (finalAccNo1 > 0) {
-                                                        AccountServiceImpl finalAccountService1 = accountService;
-                                                        double finalMoney = money;
-                                                        userFound.getAccounts().forEach(account -> {
-                                                            if (account.getAccountNumber().equals(finalAccNo1)) {
-                                                                finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
-                                                                new MainMenu().reportSuccessTransaction(account, Main.transactionId);
-                                                            }
-                                                        });
-
-                                                    }
-                                                }
-                                                break;
-                                            } catch (NotEnoughBalanceException ioe) {
-                                                System.out.println(ioe.getMessage());
-                                            } catch (NegativeBalanceException nbe) {
-                                                System.out.printf(nbe.getMessage());
-                                            }
-                                        }
-                                        break;
-                                    case 4:
-                                        // TRANSFER MONEY IN THE SAME ACCOUNT OR DIFFERENT ACCOUNT
-                                        while (true) {
-                                            try {
-                                                System.out.println("Transfer money to another account");
-                                                AccountTransferImpl accountTransference = AccountTransferImpl.getInstance();
-                                                accountTransference.transferMoneyToAccount(userFound);
-                                                break;
-                                            } catch (AccountNotFoundException anf) {
-                                                System.err.println(anf.getMessage());
-                                            }
-                                        }
-                                        break;
-                                    case 5:
-                                        while (true) {
-                                            try {
-
-                                                AccountBillPayment accountBillPayment = new AccountBillPaymentImpl();
-                                                accountBillPayment.transferMoneyToAccount(userFound);
-                                                break;
-                                            } catch (NotEnoughBalanceException anf) {
-                                                System.out.println(anf.getMessage());
-                                            }
-                                        }
-                                        break;
-                                    case 6:
-                                        while (true) {
-                                            MenuUtil.clearScreen();
-                                            System.out.println("Client Information");
-                                            PersonalData personalData = new AccountServiceImpl().getPersonalData(userFound.getUsername());
-                                            mainMenu.personalInformationMenu(personalData);
-                                            System.out.print("Please press Y to go main menu: ");
-                                            Scanner input = new Scanner(System.in);
-                                            if (input.next().equalsIgnoreCase("Y")) {
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    case 7:
-                                        MenuUtil.clearScreen();
-                                        System.out.println("Transaction Report");
-                                        while (true) {
-                                            TransactionService<Transaction> transactionService = new TransactionServiceImpl();
-                                            List<Transaction> transactions = transactionService.getAllTransactionByUsername(userFound.getUsername());
-                                            new MainMenu().reportAllTransactionMenuByUsername(transactions);
-
-                                            System.out.print("Press Y to go back: ");
-                                            Scanner inputGoBack = new Scanner(System.in);
-                                            if (inputGoBack.next().equalsIgnoreCase("Y")) {
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    case 8:
-                                        keep = false;
-                                        break;
-
-                                    default:
-                                        System.out.println("Invalid option.  Choose an option");
-                                }
-                            }
-
-                        } catch (AccountNotFoundException acn) {
-                            System.err.println("Account doesn't exists, please select another account");
-                        } catch (InvalidCredentialException ice) {
-                            System.err.printf("""
-                                                          Error Message: %s
-                                    """, ice.getMessage());
-                        }
+                        mainOptionMenu(accountService, mainMenu, selectOption, userName, password);
                     }
                     case 3 -> {
                         System.out.println("Exiting....");
@@ -249,9 +70,195 @@ public class Main {
                     default -> System.out.println("Invalid option");
                 }
             } catch (AccountNotFoundException cnfe) {
-                System.out.println("Please register a new account.");
+                System.out.println("Please register a new account." + cnfe.getMessage());
             }
         }
+    }
+
+    private static void mainOptionMenu(AccountServiceImpl accountService, MainMenu mainMenu, Scanner selectOption, String userName, String password) {
+        try {
+            boolean keep = true;
+            Client userFound = accountService.login(userName, password);
+
+            while (keep) {
+                mainMenu.optionsMenu(userName);
+                System.out.print("Please select an option: ");
+                int accOptions = selectOption.nextInt();
+                double money;
+                String[] accountsNumber = new String[2];
+                switch (accOptions) {
+                    case 1:
+                        // SHOW MY ACCOUNT INFO
+                        while (true) {
+                            if (!mainMenu.showMyAccounts(userFound)) {
+                                break;
+                            }
+                        }
+                        break;
+                    case 2:
+                        // DEPOSIT MONEY
+                        while (true) {
+                            try {
+                                MenuUtil.getInstance().clearScreen();
+                                System.out.println("Deposit Money");
+                                // Invoke deposit money
+                                System.out.print("Please type amount: $");
+                                money = selectOption.nextDouble();
+
+                                if (money <= 0) {
+                                    throw new NegativeBalanceException("Please deposit more or equal than $1");
+                                }
+
+                                int accNumSelected = getAccountNumberFromAccountType(selectOption, userFound, accountsNumber);
+
+                                if (accNumSelected == 1 || accNumSelected == 2) {
+                                    long finalAccNo1 = Long.parseLong(accountsNumber[accNumSelected - 1]);
+                                    // validate if the account number if > than 0
+                                    if (finalAccNo1 > 0) {
+                                        AccountServiceImpl finalAccountService = accountService;
+                                        double finalMoney1 = money;
+                                        userFound.getAccounts().forEach(account -> {
+                                            if (account.getAccountNumber().equals(finalAccNo1)) {
+                                                globalAccount = account;
+                                                finalAccountService.depositMoney(userFound.getUsername(), account, finalMoney1);
+                                                ReportSuccessTransaction.getInstance().reportSuccessTransaction(account, Main.transactionId);
+                                            }
+                                        });
+                                        break;
+                                    } else {
+                                        System.out.println("Select a valid account number.");
+                                    }
+                                }
+                            } catch (NegativeBalanceException nb) {
+                                System.err.println(nb.getMessage());
+                            }
+                        }
+                        break;
+                    case 3:
+                        // WITHDRAW OPERATION
+                        while (true) {
+                            try {
+
+                                System.out.println("Withdraw Money");
+                                System.out.print("Please type amount: $");
+                                money = selectOption.nextDouble();
+
+                                if (money <= 0) {
+                                    throw new NegativeBalanceException("Please deposit more or equal than $1");
+                                }
+
+                                System.out.print("Select account: ");
+                                int withdrawAccNumSelected = getAccountNumberFromAccountType(selectOption, userFound, accountsNumber);
+                                if (withdrawAccNumSelected == 1 || withdrawAccNumSelected == 2) {
+                                    long finalAccNo1 = Long.parseLong(accountsNumber[withdrawAccNumSelected - 1]);
+                                    if (finalAccNo1 > 0) {
+                                        AccountServiceImpl finalAccountService1 = accountService;
+                                        double finalMoney = money;
+                                        userFound.getAccounts().forEach(account -> {
+                                            if (account.getAccountNumber().equals(finalAccNo1)) {
+                                                finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
+                                                ReportSuccessTransaction.getInstance().reportSuccessTransaction(account, Main.transactionId);
+                                            }
+                                        });
+
+                                    }
+                                }
+                                break;
+                            } catch (NotEnoughBalanceException ioe) {
+                                System.out.println(ioe.getMessage());
+                            } catch (NegativeBalanceException nbe) {
+                                System.out.printf(nbe.getMessage());
+                            }
+                        }
+                        break;
+                    case 4:
+                        // TRANSFER MONEY IN THE SAME ACCOUNT OR DIFFERENT ACCOUNT
+                        while (true) {
+                            try {
+                                System.out.println("Transfer money to another account");
+                                AccountTransferImpl accountTransference = AccountTransferImpl.getInstance();
+                                accountTransference.transferMoneyToAccount(userFound);
+                                break;
+                            } catch (AccountNotFoundException anf) {
+                                System.err.println(anf.getMessage());
+                            }
+                        }
+                        break;
+                    case 5:
+                        while (true) {
+                            try {
+
+                                AccountBillPayment accountBillPayment = new AccountBillPaymentImpl();
+                                accountBillPayment.transferMoneyToAccount(userFound);
+                                break;
+                            } catch (NotEnoughBalanceException anf) {
+                                System.out.println(anf.getMessage());
+                            }
+                        }
+                        break;
+                    case 6:
+                        while (true) {
+                            MenuUtil.getInstance().clearScreen();
+                            System.out.println("Client Information");
+                            PersonalData personalData = new AccountServiceImpl().getPersonalData(userFound.getUsername());
+                            mainMenu.personalInformationMenu(personalData);
+                            System.out.print("Please press Y to go main menu: ");
+                            Scanner input = new Scanner(System.in);
+                            if (input.next().equalsIgnoreCase("Y")) {
+                                break;
+                            }
+                        }
+                        break;
+                    case 7:
+                        MenuUtil.getInstance().clearScreen();
+                        System.out.println("Transaction Report");
+                        while (true) {
+                            TransactionService<Transaction> transactionService = new TransactionServiceImpl();
+                            List<Transaction> transactions = transactionService.getAllTransactionByUsername(userFound.getUsername());
+                            ReportTransaction.getInstance().reportAllTransactionMenuByUsername(transactions);
+
+                            System.out.print("Press Y to go back: ");
+                            Scanner inputGoBack = new Scanner(System.in);
+                            if (inputGoBack.next().equalsIgnoreCase("Y")) {
+                                break;
+                            }
+                        }
+                        break;
+                    case 8:
+                        keep = false;
+                        break;
+
+                    default:
+                        System.out.println("Invalid option.  Choose an option");
+                }
+            }
+
+        } catch (AccountNotFoundException acn) {
+            System.err.println("Account doesn't exists, please select another account");
+        } catch (InvalidCredentialException ice) {
+            System.err.printf("""
+                                          Error Message: %s
+                    """, ice.getMessage());
+        }
+    }
+
+    public static int getAccountNumberFromAccountType(Scanner selectOption, Client userFound, String[] accountsNumber) {
+        userFound.getAccounts().forEach(account -> {
+            if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
+                accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
+            } else {
+                accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
+            }
+        });
+
+        if (accountsNumber[0] == null) {
+            accountsNumber[0] = "0";
+        } else if (accountsNumber[1] == null) {
+            accountsNumber[1] = "0";
+        }
+        MainMenu.getInstance().chooseAccountMenu(accountsNumber);
+        System.out.print("Select account: [1][2]: ");
+        return selectOption.nextInt();
     }
 }
 

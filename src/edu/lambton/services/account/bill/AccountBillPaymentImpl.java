@@ -7,8 +7,8 @@ import edu.lambton.file.reader.company.ReadCompanyAccountImpl;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
 import edu.lambton.model.CompanyAccount;
-import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
+import edu.lambton.screen.ReportSuccessTransaction;
 import edu.lambton.services.account.deposit.AccountDeposit;
 import edu.lambton.services.account.deposit.AccountDepositImpl;
 import edu.lambton.services.account.withdraw.AccountWithdraw;
@@ -28,9 +28,8 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
     @Override
     public List<CompanyAccount> getAllCompanyAccount() {
         ReadCompanyAccount<CompanyAccount> companyAccount = new ReadCompanyAccountImpl();
-        List<CompanyAccount> companyAccounts = companyAccount.readAllCompanyAccount();
 
-        return companyAccounts;
+        return companyAccount.readAllCompanyAccount();
     }
 
     @Override
@@ -43,22 +42,7 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
 
         System.out.print("From account number: ");
 
-        fromUserAccount.getAccounts().forEach(account -> {
-            if (account.getAccountType().equals(AccountType.CHEQUING_ACCOUNT)) {
-                accountsNumber[0] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-            } else {
-                accountsNumber[1] = String.valueOf(account.getAccountNumber() > 0 ? account.getAccountNumber() : 0);
-            }
-        });
-
-        if (accountsNumber[0] == null) {
-            accountsNumber[0] = "0";
-        } else if (accountsNumber[1] == null) {
-            accountsNumber[1] = "0";
-        }
-        new MainMenu().chooseAccountMenu(accountsNumber);
-        System.out.print("Select account: [1][2]: ");
-        int accNumSelected = input.nextInt();
+        int accNumSelected = Main.getAccountNumberFromAccountType(input, fromUserAccount, accountsNumber);
 
         if (accNumSelected == 1 || accNumSelected == 2) {
             long finalAccNo1 = Long.parseLong(accountsNumber[accNumSelected - 1]);
@@ -74,7 +58,7 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
                 if (account.getAccountNumber().equals(finalAccNo1)) {
 
                     System.out.println("Pay the bill");
-                    new MainMenu().payBillMenu();
+                    MainMenu.getInstance().payBillMenu();
                     System.out.print("Select option [1-5] or B to go back: ");
                     String optionSelected = input.next();
                     int numericOption;
@@ -105,7 +89,7 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
                 accountDeposit.depositMoney(toUserName, account, amount);
                 System.out.println("Money has been transferred successfully.");
                 account.setBalance(amount);
-                new MainMenu().reportSuccessTransferTransaction(fromAccount, account, companyName, Main.transactionId);
+                ReportSuccessTransaction.getInstance().reportSuccessTransferTransaction(fromAccount, account, companyName, Main.transactionId);
             }
         });
 

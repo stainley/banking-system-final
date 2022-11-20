@@ -61,7 +61,6 @@ public class ReportSuccessTransaction {
         }
     }
 
-
     public void reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, String companyName, long transactionId) {
         clearHelper(fromAccount);
         StringBuilder typeAccount = new StringBuilder();
@@ -124,5 +123,4 @@ public class ReportSuccessTransaction {
         String keyPressed = pressEnter.next();
         return !keyPressed.equalsIgnoreCase("Y");
     }
-
 }

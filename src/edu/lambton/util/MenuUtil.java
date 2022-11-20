@@ -15,6 +15,7 @@ public class MenuUtil {
                 System.err.println(e.getMessage());
             }
         } else {
+           //\143
             System.out.print("\033\143");
         }
 

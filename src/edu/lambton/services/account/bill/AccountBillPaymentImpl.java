@@ -1,9 +1,12 @@
-package edu.lambton.services.account.transfer;
+package edu.lambton.services.account.bill;
 
 import edu.lambton.Main;
 import edu.lambton.exception.types.NotEnoughBalanceException;
+import edu.lambton.file.reader.company.ReadCompanyAccount;
+import edu.lambton.file.reader.company.ReadCompanyAccountImpl;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
+import edu.lambton.model.CompanyAccount;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.account.deposit.AccountDeposit;
@@ -13,24 +16,21 @@ import edu.lambton.services.account.withdraw.AccountWithdrawImpl;
 import edu.lambton.services.client.ClientAccount;
 import edu.lambton.services.client.ClientAccountImpl;
 
+import java.util.List;
 import java.util.Scanner;
 
-public class AccountTransferImpl implements AccountTransfer {
-    private static AccountTransferImpl instance;
+public class AccountBillPaymentImpl implements AccountBillPayment {
 
     private final AccountDeposit accountDeposit = new AccountDepositImpl();
     private final AccountWithdraw accountWithdraw = new AccountWithdrawImpl();
-
     private final ClientAccount clientAccount = new ClientAccountImpl();
 
-    private AccountTransferImpl() {
-    }
+    @Override
+    public List<CompanyAccount> getAllCompanyAccount() {
+        ReadCompanyAccount<CompanyAccount> companyAccount = new ReadCompanyAccountImpl();
+        List<CompanyAccount> companyAccounts = companyAccount.readAllCompanyAccount();
 
-    public static AccountTransferImpl getInstance() {
-        if (instance == null) {
-            instance = new AccountTransferImpl();
-        }
-        return instance;
+        return companyAccounts;
     }
 
     @Override
@@ -72,21 +72,26 @@ public class AccountTransferImpl implements AccountTransfer {
             fromUserAccount.getAccounts().forEach(account -> {
 
                 if (account.getAccountNumber().equals(finalAccNo1)) {
-                    System.out.print("To account number: ");
-                    long toAccountNumber = input.nextLong();
 
-                    transferMoney(account, fromUserAccount, toAccountNumber, amount);
+                    System.out.println("Pay the bill");
+                    new MainMenu().payBillMenu();
+                    System.out.print("Select option [1-5] or B to go back: ");
+                    String optionSelected = input.next();
+                    int numericOption;
+
+                    numericOption = Integer.parseInt(optionSelected);
+                    CompanyAccount companyAccount = getAllCompanyAccount().get(numericOption - 1);
+
+                    transferMoney(account, fromUserAccount, companyAccount.getAccountNumber(), companyAccount.getCompanyName(), amount);
                 }
             });
         }
     }
 
-    @Override
-    public void transferMoney(AccountAbstract fromAccount, Client fromUserAccount, long toAccountNumber, double amount) {
+    public void transferMoney(AccountAbstract fromAccount, Client fromUserAccount, long toAccountNumber, String companyName, double amount) {
         if (fromAccount.getBalance() < amount) {
             throw new NotEnoughBalanceException("Don't enough balance. You balance is: " + fromAccount.getBalance());
         }
-
         // First we need to withdraw money, and then send to another account
         accountWithdraw.withdrawMoney(fromUserAccount.getUsername(), fromAccount, amount);
 
@@ -100,7 +105,7 @@ public class AccountTransferImpl implements AccountTransfer {
                 accountDeposit.depositMoney(toUserName, account, amount);
                 System.out.println("Money has been transferred successfully.");
                 account.setBalance(amount);
-                new MainMenu().reportSuccessTransferTransaction(fromAccount, account, Main.transactionId);
+                new MainMenu().reportSuccessTransferTransaction(fromAccount, account, companyName, Main.transactionId);
             }
         });
 

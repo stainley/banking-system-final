@@ -1,4 +1,4 @@
-package edu.lambton.services.account;
+package edu.lambton.services.account.deposit;
 
 import edu.lambton.file.writer.account.WriteAccountInformation;
 import edu.lambton.file.writer.account.WriteAccountInformationImpl;

@@ -149,6 +149,41 @@ public class MainMenu {
         return !keyPressed.equalsIgnoreCase("Y");
     }
 
+    public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, String companyName, long transactionId) {
+        MenuUtil.clearScreen();
+        StringBuilder typeAccount = new StringBuilder();
+        if (fromAccount instanceof SavingAccount) {
+            typeAccount.append(fromAccount.getAccountType().getString());
+        } else if (fromAccount instanceof ChequingAccount) {
+            typeAccount.append(fromAccount.getAccountType().getString());
+        } else {
+            System.err.println("Invalid type account");
+        }
+
+        System.out.printf("""
+                        #############################################################################
+                        #                            ACCOUNT INFORMATION
+                        #############################################################################
+                        #       Transaction ID: %s
+                        #       From: Account Number: %s
+                        #           - Account Type: %s
+                        #           - Balance: %s
+                        #       To: Account Name: %s
+                        #           - Amount: %s
+                        #############################################################################
+                        %n""",
+                transactionId,
+                fromAccount.getAccountNumber(),
+                typeAccount, String.format("$%,3.2f", fromAccount.getBalance()),
+                companyName,
+                String.format("$%,3.2f", toAccount.getBalance()));
+
+        System.out.print("Press Y to return. ");
+        Scanner pressEnter = new Scanner(System.in);
+        String keyPressed = pressEnter.next();
+        return !keyPressed.equalsIgnoreCase("Y");
+    }
+
     public boolean reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, long transactionId) {
         MenuUtil.clearScreen();
         StringBuilder typeAccount = new StringBuilder();

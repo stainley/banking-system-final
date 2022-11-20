@@ -6,11 +6,14 @@ import edu.lambton.exception.types.NegativeBalanceException;
 import edu.lambton.exception.types.NotEnoughBalanceException;
 import edu.lambton.model.AccountAbstract;
 import edu.lambton.model.Client;
+import edu.lambton.model.CompanyAccount;
 import edu.lambton.model.PersonalData;
 import edu.lambton.model.transaction.Transaction;
 import edu.lambton.model.type.AccountType;
 import edu.lambton.screen.MainMenu;
 import edu.lambton.services.AccountServiceImpl;
+import edu.lambton.services.account.bill.AccountBillPayment;
+import edu.lambton.services.account.bill.AccountBillPaymentImpl;
 import edu.lambton.services.account.transfer.AccountTransferImpl;
 import edu.lambton.services.transaction.TransactionService;
 import edu.lambton.services.transaction.TransactionServiceImpl;
@@ -154,8 +157,6 @@ public class Main {
                                                         userFound.getAccounts().forEach(account -> {
                                                             if (account.getAccountNumber().equals(finalAccNo1)) {
                                                                 finalAccountService1.withdrawMoney(userFound.getUsername(), account, finalMoney);
-                                                                //TODO: Show menu with report actual balance.
-                                                                // Show report with the success transaction
                                                                 new MainMenu().reportSuccessTransaction(account, Main.transactionId);
                                                             }
                                                         });
@@ -184,12 +185,15 @@ public class Main {
                                         }
                                         break;
                                     case 5:
-                                        try {
-                                            System.out.println("Pay the bill");
-                                            //transferMoneyToAccount(userFound);
-                                            break;
-                                        } catch (AccountNotFoundException anf) {
-                                            System.err.println(anf.getMessage());
+                                        while (true) {
+                                            try {
+
+                                                AccountBillPayment accountBillPayment = new AccountBillPaymentImpl();
+                                                accountBillPayment.transferMoneyToAccount(userFound);
+                                                break;
+                                            } catch (NotEnoughBalanceException anf) {
+                                                System.out.println(anf.getMessage());
+                                            }
                                         }
                                         break;
                                     case 6:

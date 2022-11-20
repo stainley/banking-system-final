@@ -38,7 +38,7 @@ public class CredentialServiceImpl implements CredentialService {
             writeClientDetail.writeClientDetail(username, registerInfoPersonaData());
             System.out.println("User registered successfully.\n\n");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BankException("An error had occurred: " + e.getMessage());
         } catch (InvalidFormatException ife) {
             throw new InvalidFormatException(ife.getMessage());
         }
@@ -105,7 +105,7 @@ public class CredentialServiceImpl implements CredentialService {
         try {
             return writeCredentialFile.writePasswordFile(sb.toString());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BankException("An error has occurred:" + e.getMessage());
         }
     }
 
@@ -123,8 +123,7 @@ public class CredentialServiceImpl implements CredentialService {
                 """);
         System.out.print("Choose type account: ");
         int typeAccountSelected = input.nextInt();
-        //long accountNumber = 0;
-        long accountNumber = 0;
+        long accountNumber;
         while (true) {
             try {
                 accountNumber = new AccountNumberGenerator().generatorAccountNumber();
@@ -206,7 +205,6 @@ public class CredentialServiceImpl implements CredentialService {
 
         return new PersonalData(name, birthOfYear, address.toString(), email, phone);
     }
-
 
     public static boolean patternMatches(String emailAddress, String regexPattern) {
         return Pattern.compile(regexPattern)

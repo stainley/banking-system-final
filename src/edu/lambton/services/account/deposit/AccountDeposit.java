@@ -1,4 +1,4 @@
-package edu.lambton.services.account;
+package edu.lambton.services.account.deposit;
 
 import edu.lambton.model.AccountAbstract;
 

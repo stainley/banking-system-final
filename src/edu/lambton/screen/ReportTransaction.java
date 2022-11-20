@@ -5,9 +5,7 @@ import edu.lambton.model.transaction.Transaction;
 import java.util.List;
 
 public class ReportTransaction {
-
     private static ReportTransaction instance;
-
     private ReportTransaction() {
     }
 
@@ -31,7 +29,5 @@ public class ReportTransaction {
                     transaction.getTransactionType());
             System.out.println("-----------------------------------------------------------------------------------------");
         });
-
-
     }
 }

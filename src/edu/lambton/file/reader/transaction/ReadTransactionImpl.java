@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReadTransactionImpl extends ValidateFile implements ReadTransaction<Transaction> {
-
-
     @Override
     public List<Transaction> readAllTransaction() throws FileNotFoundException {
         List<Transaction> transactions = new ArrayList<>();

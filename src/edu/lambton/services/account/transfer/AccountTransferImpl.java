@@ -44,7 +44,7 @@ public class AccountTransferImpl implements AccountTransfer {
         System.out.print("Money: ");
         double amount = input.nextDouble();
 
-        System.out.print("From account number: ");
+        //System.out.println("From account number: ");
 
         int accNumSelected = Main.getAccountNumberFromAccountType(input, fromUserAccount, accountsNumber);
 

@@ -8,6 +8,5 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface ReadTransaction<T extends Bank> extends IReadFile<BufferedReader> {
-
     List<T> readAllTransaction() throws FileNotFoundException;
 }

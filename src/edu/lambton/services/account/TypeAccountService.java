@@ -4,7 +4,6 @@ import edu.lambton.exception.types.InvalidOptionException;
 import edu.lambton.model.type.AccountType;
 
 public class TypeAccountService {
-
     private static TypeAccountService instance;
 
     private TypeAccountService() {
@@ -16,7 +15,6 @@ public class TypeAccountService {
         }
         return instance;
     }
-
     public AccountType typeAccount(int accountNumber) {
         return switch (accountNumber) {
             case 1 -> AccountType.CHEQUING_ACCOUNT;
@@ -24,5 +22,4 @@ public class TypeAccountService {
             default -> throw new InvalidOptionException("Invalid option type account");
         };
     }
-
 }

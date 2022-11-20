@@ -80,10 +80,10 @@ public class Main {
 
     private static void mainOptionMenu(AccountServiceImpl accountService, MainMenu mainMenu, Scanner selectOption, String userName, String password) {
         try {
-            boolean keep = true;
+            boolean isRunning = true;
             Client userFound = accountService.login(userName, password);
 
-            while (keep) {
+            while (isRunning) {
                 MenuUtil.getInstance().clearScreen();
                 mainMenu.optionsMenu(userName);
                 System.out.print("Please select an option: ");
@@ -105,8 +105,11 @@ public class Main {
                         while (true) {
 
                             MenuUtil.getInstance().clearScreen();
-                            System.out.println("Deposit Money");
-                            // Invoke deposit money
+                            System.out.println("""
+                                    ################################################################################
+                                    #                           DEPOSIT OPTION                                     #
+                                    ################################################################################
+                                    """);
                             System.out.print("Please type amount: $");
                             money = selectOption.nextDouble();
                             try {
@@ -161,7 +164,6 @@ public class Main {
                                                 break;
                                             }
                                         }
-                                        //break;
                                     } catch (InvalidOptionException ioe) {
                                         System.err.println(ioe.getMessage());
                                     }
@@ -190,6 +192,7 @@ public class Main {
                     case 5:
                         // PAYMENT BILLS
                         while (true) {
+                            MenuUtil.getInstance().clearScreen();
                             try {
 
                                 AccountBillPayment accountBillPayment = new AccountBillPaymentImpl();
@@ -204,10 +207,9 @@ public class Main {
                         // PERSONAL DATA
                         while (true) {
                             MenuUtil.getInstance().clearScreen();
-                            System.out.println("Client Information");
                             PersonalData personalData = new AccountServiceImpl().getPersonalData(userFound.getUsername());
                             mainMenu.personalInformationMenu(personalData);
-                            System.out.print("Please press Y to go main menu: ");
+                            System.out.print("Please press Y go back: ");
                             Scanner input = new Scanner(System.in);
                             if (input.next().equalsIgnoreCase("Y")) {
                                 break;
@@ -217,7 +219,6 @@ public class Main {
                     case 7:
                         // SHOW MY TRANSACTIONS
                         MenuUtil.getInstance().clearScreen();
-                        System.out.println("Transaction Report");
                         while (true) {
                             TransactionService<Transaction> transactionService = new TransactionServiceImpl();
                             List<Transaction> transactions = transactionService.getAllTransactionByUsername(userFound.getUsername());
@@ -232,7 +233,13 @@ public class Main {
                         break;
                     case 8:
                         // LOGOUT
-                        keep = false;
+                        isRunning = false;
+                        try {
+                            System.out.println("Thanks for using Bank System X");
+                            Thread.sleep(3_000);
+                        } catch (InterruptedException e) {
+                            System.err.println(e.getMessage());
+                        }
                         break;
 
                     default:

@@ -65,6 +65,7 @@ public class ReportSuccessTransaction {
     public void reportSuccessTransferTransaction(AccountAbstract fromAccount, AccountAbstract toAccount, String companyName, long transactionId) {
         clearHelper(fromAccount);
         StringBuilder typeAccount = new StringBuilder();
+        typeAccount.append(fromAccount.getAccountType().getString());
         System.out.printf("""
                         #############################################################################
                         #                            ACCOUNT INFORMATION

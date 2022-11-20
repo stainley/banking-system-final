@@ -34,13 +34,16 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
 
     @Override
     public void transferMoneyToAccount(Client fromUserAccount) {
+        System.out.println("""
+                ################################################################################
+                #                           BILL PAYMENT OPTION                                #
+                ################################################################################
+                """);
         String[] accountsNumber = new String[2];
         Scanner input = new Scanner(System.in);
 
         System.out.print("Money: ");
         double amount = input.nextDouble();
-
-        System.out.print("From account number: ");
 
         int accNumSelected = Main.getAccountNumberFromAccountType(input, fromUserAccount, accountsNumber);
 
@@ -57,15 +60,17 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
 
                 if (account.getAccountNumber().equals(finalAccNo1)) {
 
-                    System.out.println("Pay the bill");
                     MainMenu.getInstance().payBillMenu();
                     System.out.print("Select option [1-5] or B to go back: ");
                     String optionSelected = input.next();
                     int numericOption;
-
+                    if (optionSelected instanceof String) {
+                        if (optionSelected.equalsIgnoreCase("B")) {
+                            return;
+                        }
+                    }
                     numericOption = Integer.parseInt(optionSelected);
                     CompanyAccount companyAccount = getAllCompanyAccount().get(numericOption - 1);
-
                     transferMoney(account, fromUserAccount, companyAccount.getAccountNumber(), companyAccount.getCompanyName(), amount);
                 }
             });
@@ -87,7 +92,7 @@ public class AccountBillPaymentImpl implements AccountBillPayment {
         toUser.getAccounts().forEach(account -> {
             if (account.getAccountNumber() == toAccountNumber) {
                 accountDeposit.depositMoney(toUserName, account, amount);
-                System.out.println("Money has been transferred successfully.");
+                //System.out.println("Money has been transferred successfully.");
                 account.setBalance(amount);
                 ReportSuccessTransaction.getInstance().reportSuccessTransferTransaction(fromAccount, account, companyName, Main.transactionId);
             }

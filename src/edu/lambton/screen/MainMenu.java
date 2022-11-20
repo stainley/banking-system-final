@@ -87,14 +87,16 @@ public class MainMenu {
     // The user gets Registered here by filling the form with the options below//
     public void personalInformationMenu(PersonalData personalData) {
         System.out.printf("""
-                ****************************************************************************************************************
+                ********************************************************************************************************
+                                                  CLIENT INFORMATION OPTION
+                ********************************************************************************************************
                 *                                 1. Name:          %s
                 *                                 2. Address:       %s
                 *                                 3. Phone:         %s
                 *                                 4. Email:         %s
                 *                                 5. Age:           %s
                 *
-                ****************************************************************************************************************
+                ********************************************************************************************************
                 """, personalData.getName(), personalData.getAddress(), personalData.getPhoneNumber(), personalData.getEmail(), personalData.getBirthOfYear());
     }
 
